@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#203d3c"><meta name="description" content="一座雪山下的小村庄。漫步、骑马、登山，与牦牛和狗相伴，看四季流转。">
-  <title>雪隐山居 · 四季山谷</title>
+  <title>雪隐山居 · 第二章 翻山听澜</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -21,11 +21,11 @@
   </header>
   <main>
     <section id="welcome">
-      <p class="eyebrow"><span></span> 一个属于你的山间世界</p>
+      <p class="eyebrow"><span></span> 第二章 · 翻山听澜</p>
       <h1>把日子，<br>交给山野。</h1>
-      <p class="intro">雪山、松林与一汪海子。<br>在四季之间，找到自己的步调。</p>
+      <p class="intro">从 2000 米的村落，走向 3800 米的垭口。<br>翻过层层山野，去听瀑布的回声。</p>
       <button id="enterBtn" class="primary-button" disabled><span id="enterText">山谷正在苏醒</span><span class="arrow">↗</span></button>
-      <p class="welcome-note">自由探索 · 四季流转 · 万物相伴</p>
+      <p class="welcome-note">两座村庄 · 五重地貌 · 一条翻山古道</p>
     </section>
     <div id="loading"><span id="loadingLabel">正在铺开山川…</span><div><i id="loadingBar"></i></div></div>
     <section id="error" hidden><h2>山谷暂时无法展开</h2><p id="errorText"></p><button id="retryBtn" class="primary-button">用轻量画质重试 ↗</button><p>请使用开启了图形加速的 Chrome 或 Edge。</p></section>
@@ -34,8 +34,8 @@
     <div id="toast" role="status" aria-live="polite"></div>
     <div id="exploreHud" hidden>
       <div class="place"><span class="eyebrow">此刻所在</span><h2 id="placeName">雪隐村</h2><p id="placeDesc">炊烟升起的地方，就是家。</p></div>
-      <div class="journey-chip"><span id="travelMode">徒步漫游</span><i></i><span id="altitude">海拔 2,860 m</span></div>
-      <div id="inputHint">按住鼠标拖动环顾 · WASD 移动 · Shift 快行 · E 互动 · M 地图</div>
+      <div class="journey-chip"><span id="travelMode">徒步漫游</span><i></i><span id="altitude">海拔 2,000 m</span></div>
+      <p id="altitudeBand" class="band-caption"></p><p id="legGoal" class="leg-goal"></p><div id="inputHint">按住鼠标拖动环顾 · WASD 移动 · Shift 快行 · E 互动 · M 地图</div>
     </div>
     <div id="resume" hidden><button id="resumeBtn" class="primary-button">继续漫游 ↗</button><p>按住画面拖动也可以环顾四周</p></div>
     <aside id="settings" class="panel" hidden>
@@ -66,12 +66,13 @@
       </div>
       <div data-tabpage="journey" hidden>
         <div class="field-title"><h3>去山野走走</h3><span>选择地点可直接前往</span></div>
-        <div id="destinations"></div>
-        <div class="field-title"><h3>漫游印记</h3><span id="discoveries">0 / 6</span></div><div id="stamps"></div>
+        <p id="crossingState" class="panel-note"></p><div id="destinations"></div>
+        <div class="field-title"><h3>漫游印记</h3><span id="discoveries">0 / 13</span></div><div id="stamps"></div>
         <button class="text-button" id="homeBtn">↶ 回到村口</button>
       </div>
     </aside>
-    <section id="mapPanel" class="panel map-panel" hidden><div class="panel-head"><div><span class="eyebrow">A MAP OF SLOW DAYS</span><h2>山谷漫游图</h2></div><button class="close-button" data-close="mapPanel" aria-label="关闭地图">×</button></div><canvas id="mapCanvas" width="620" height="560" aria-label="山谷地图"></canvas><p class="panel-note">圆点是你的位置 · 点击标记前往<br>向北翻过松林，雪山就在眼前。</p><div id="mapLocations"></div></section>
+    <section id="mapPanel" class="panel map-panel" hidden><div class="panel-head"><div><span class="eyebrow">A MAP OF SLOW DAYS</span><h2>山谷全景图</h2></div><button class="close-button" data-close="mapPanel" aria-label="关闭地图">×</button></div><div class="map-toolbar"><button id="mapZoomOut" aria-label="大地图缩小">−</button><button id="mapZoomIn" aria-label="大地图放大">＋</button><button id="mapFit">整个世界</button><button id="mapFollow">我的位置</button></div><canvas id="mapCanvas" width="720" height="650" aria-label="可缩放的世界地图"></canvas><div class="map-legend"><span style="--dot:#66846b">森林</span><span style="--dot:#91a17f">疏松</span><span style="--dot:#b4b185">花甸</span><span style="--dot:#aaa998">岩坡</span><span style="--dot:#e1e8e2">雪域</span></div><p class="panel-note">橙色箭头是你的位置与朝向 · 虚线是翻山古道<br>滚轮缩放，拖动查看；点击地标可直接前往。</p><div id="mapLocations"></div></section>
+    <aside id="miniMap" hidden aria-label="实时小地图"><div class="mini-head"><span>山谷方位</span><output id="miniZoomLevel">7.0×</output><button id="miniFull" title="展开世界地图" aria-label="展开世界地图">↗</button></div><canvas id="miniCanvas" width="260" height="230" aria-label="可缩放的实时小地图"></canvas><div class="mini-tools"><button id="miniZoomOut" aria-label="小地图缩小">−</button><button id="miniZoomIn" aria-label="小地图放大">＋</button><button id="miniFit" title="显示整个世界">全境</button><button id="miniFollow" title="跟随我的位置">定位</button></div><p id="miniCaption">2,000 m · 茂密山地森林</p></aside>
     <section id="helpPanel" class="panel" hidden><div class="panel-head"><div><span class="eyebrow">TAKE YOUR TIME</span><h2>慢慢来，山一直在</h2></div><button class="close-button" data-close="helpPanel" aria-label="关闭操作指南">×</button></div><div class="help-list"><p><kbd>W A S D</kbd> 或方向键 · 自由行走</p><p><kbd>鼠标拖动</kbd> 环顾 · 滚轮调整视野</p><p><kbd>点击画面</kbd> 锁定鼠标环顾 · Esc 释放</p><p><kbd>Shift</kbd> 快走 / 骑马快跑</p><p><kbd>Space</kbd> 跳跃 · 山坡会自动攀行</p><p><kbd>E</kbd> 采集 / 喂牦牛 / 亲近狗 / 骑马</p><p><kbd>R</kbd> 骑马 / 下马</p><p><kbd>M</kbd> 地图 <kbd>J</kbd> 手记 <kbd>P</kbd> 拍照</p><p><kbd>Esc</kbd> 释放鼠标或关闭面板</p></div><p class="panel-note">没有任务倒计时，也没有必须抵达的终点。<br>遇见草木、动物和风景，就停一停。</p></section>
     <div id="touchControls" hidden><div id="joystick" aria-label="移动摇杆"><i></i></div><div class="touch-actions"><button id="touchRide" aria-label="骑马或下马">♞</button><button id="touchInteract">互动 E</button><button id="touchMap">地图</button></div></div>
     <button id="dismountBtn" hidden>下马 <kbd>R</kbd></button>

@@ -1,6 +1,6 @@
-# 雪隐山居 · 四季山谷
+# 雪隐山居 · 第二章：翻山听澜
 
-为你制作的可探索 3D 世界初版。雪山、森林、木石村落、草甸、溪流与海子都属于同一片可行走的地形。
+可探索的连续 3D 山谷世界。第二版扩大到约 16.4 × 20.5 公里：从海拔 2000 米的雪隐村，沿古道越过 3800 米的望雪垭口，抵达山后的听澜村与云落瀑布；照雪峰最高 5000 米。
 
 ## 已实现
 
@@ -12,7 +12,10 @@
 - 昼夜光照、星空、月光、夜晚村庄灯火与炊烟。
 - 晴、多云、薄雾、雨与雪，可以自动变化或手动选择。
 - 春夏秋冬：地表、针叶林、阔叶树、屋顶积雪、湖面及可采集植物随季节变化。
-- 地图、六个地点、发现记录、自然环境音和照片下载。
+- 五个连续海拔地貌带：茂密森林、稀疏针叶林、灌木花甸、岩石坡、雪域。映雪海子湖面在海拔 3200 米的林线/花甸交界。
+- 两座村庄、13 个地标、连续翻山古道与翻越垭口记录。
+- 常驻小地图与全景地图：实时位置/朝向、缩放、拖动、全境视图与跟随定位。
+- 发现记录、自然环境音和照片下载。
 - 植物背包、狗伙伴和牦牛照料进度保存在当前浏览器中。
 - WebGL 渲染，不需要 WebGPU、AI API Key 或额外模型订阅。
 
@@ -43,7 +46,7 @@
 
 请通过 HTTP 访问，直接双击 HTML 会受到浏览器对模块文件的限制。
 
-项目只使用本地打包的 Three.js 和原生网页代码。中文衬线字体会尝试加载 Google Fonts；无法联网时使用系统字体，世界和操作仍可运行。
+项目使用本地打包的 Three.js、原生网页代码及带 MIT 许可的 Tidewater CPU 地形辅助函数。中文衬线字体会尝试加载 Google Fonts；无法联网时使用系统字体，世界和操作仍可运行。
 
 ## 当前版本的范围
 
@@ -55,8 +58,10 @@
 
 - `dist/index.html`：界面与中文内容。
 - `dist/style.css`：界面样式与移动端适配。
-- `dist/math.js`：地形、地标、植物种类。
-- `dist/world.js`：场景、材质、动物、四季、倒影和雨雪。
+- `dist/math-v2.js`：高程、地貌带、路线、湖泊/溪流、地标与植物；`math.js` 是兼容入口。
+- `dist/alpine-world.js`：分块地形、远近植物/岩石、两座村庄、溪流与瀑布。
+- `dist/alpine-map.js`：地形底图、实时位置与交互缩放。
+- `dist/world.js`：共享基础场景、房屋、动物、四季、天空和雨雪；第二版地形由 Alpine World 实现。
 - `dist/app.js`：行走、互动、手记、地图、声音、存档。
 - `dist/vendor/three.module.js`：Three.js r160.1，MIT 许可。
 - `.openai/hosting.json`：Sites 部署配置。
@@ -64,4 +69,4 @@
 ## 第三方许可
 
 Three.js © 2010–2024 three.js authors，MIT。参见 `dist/vendor/THREE-LICENSE.txt`。
-界面可选字体 Noto Serif SC，SIL Open Font License，由 Google Fonts 托管。其他场景几何、程序纹理与合成环境音均由本项目生成。
+界面可选字体 Noto Serif SC，SIL Open Font License，由 Google Fonts 托管。Tidewater CPU 辅助函数 © 2026 DRG Software Solutions LLC，MIT，详见 `CREDITS.md` 和 `dist/vendor/tidewater/LICENSE.txt`。其他场景几何、程序纹理与合成环境音均由本项目生成。
