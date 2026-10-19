@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#203d3c"><meta name="description" content="一座雪山下的小村庄。漫步、骑马、登山，与牦牛和狗相伴，看四季流转。">
+  <title>雪隐山居 · 四季山谷</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="world" aria-label="可以自由探索的三维雪山村庄"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <header id="header">
+    <a class="brand" href="#" aria-label="雪隐山居首页"><svg viewBox="0 0 50 38"><path d="M2 32 16 9l8 12L33 3l15 29M11 18l5 4 4-3m7-7 6 7 4-6"/></svg><span>雪隐山居<small>SNOWVALLEY · A QUIET WORLD</small></span></a>
+    <div class="top-center"><span class="live-dot"></span><span id="region">雪山之下，自有天地</span></div>
+    <nav aria-label="世界工具">
+      <button class="icon-button" id="soundBtn" title="开启自然音" aria-label="开启自然音"><svg viewBox="0 0 24 24"><path d="m11 5-6 4H2v6h3l6 4V5Zm4 3a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg></button>
+      <button class="icon-button" id="photoBtn" title="拍照 P" aria-label="拍照"><svg viewBox="0 0 24 24"><path d="M3 7h5l2-3h4l2 3h5v13H3Z"/><circle cx="12" cy="13" r="4"/></svg></button>
+      <button class="icon-button" id="helpBtn" title="操作指南" aria-label="操作指南"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 4 3c-1 .5-1 1-1 2m0 2v1"/></svg></button>
+      <button class="round-button" id="settingsBtn" aria-expanded="false" aria-controls="settings"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="18" r="2"/></svg><span>山谷手记</span></button>
+    </nav>
+  </header>
+  <main>
+    <section id="welcome">
+      <p class="eyebrow"><span></span> 一个属于你的山间世界</p>
+      <h1>把日子，<br>交给山野。</h1>
+      <p class="intro">雪山、松林与一汪海子。<br>在四季之间，找到自己的步调。</p>
+      <button id="enterBtn" class="primary-button" disabled><span id="enterText">山谷正在苏醒</span><span class="arrow">↗</span></button>
+      <p class="welcome-note">自由探索 · 四季流转 · 万物相伴</p>
+    </section>
+    <div id="loading"><span id="loadingLabel">正在铺开山川…</span><div><i id="loadingBar"></i></div></div>
+    <section id="error" hidden><h2>山谷暂时无法展开</h2><p id="errorText"></p><button id="retryBtn" class="primary-button">用轻量画质重试 ↗</button><p>请使用开启了图形加速的 Chrome 或 Edge。</p></section>
+    <div id="crosshair" hidden aria-hidden="true">·</div>
+    <button id="context" hidden title="点击或按 E 互动"><kbd>E</kbd><span id="contextText">互动</span></button>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <div id="exploreHud" hidden>
+      <div class="place"><span class="eyebrow">此刻所在</span><h2 id="placeName">雪隐村</h2><p id="placeDesc">炊烟升起的地方，就是家。</p></div>
+      <div class="journey-chip"><span id="travelMode">徒步漫游</span><i></i><span id="altitude">海拔 2,860 m</span></div>
+      <div id="inputHint">按住鼠标拖动环顾 · WASD 移动 · Shift 快行 · E 互动 · M 地图</div>
+    </div>
+    <div id="resume" hidden><button id="resumeBtn" class="primary-button">继续漫游 ↗</button><p>按住画面拖动也可以环顾四周</p></div>
+    <aside id="settings" class="panel" hidden>
+      <div class="panel-head"><div><span class="eyebrow">THE VALLEY JOURNAL</span><h2>山谷手记</h2></div><button class="close-button" data-close="settings" aria-label="关闭山谷手记">×</button></div>
+      <div class="tabs" role="tablist"><button class="active" role="tab" aria-selected="true" data-tab="nature">自然</button><button role="tab" aria-selected="false" data-tab="life">生活</button><button role="tab" aria-selected="false" data-tab="journey">足迹</button></div>
+      <div data-tabpage="nature">
+        <div class="field-title"><h3>四季</h3><span id="seasonNote">万物舒展，山花初醒</span></div>
+        <div class="season-grid" id="seasons"><button data-season="0" class="selected"><span>❀</span>春生</button><button data-season="1"><span>☀</span>夏长</button><button data-season="2"><span>❋</span>秋藏</button><button data-season="3"><span>❄</span>冬寂</button></div>
+        <div class="field-title"><h3>天光</h3><output id="timeOutput">08:30</output></div>
+        <input id="timeRange" type="range" min="0" max="23.99" step="0.05" value="8.5" aria-label="时间">
+        <div class="range-labels"><span>子夜</span><span>日出</span><span>正午</span><span>日落</span><span>子夜</span></div>
+        <label class="switch-row">时光自然流转 <input id="timeAuto" type="checkbox" checked><span class="switch"></span></label>
+        <label class="switch-row">四季自然更替 <input id="seasonAuto" type="checkbox" checked><span class="switch"></span></label>
+        <div class="field-title"><h3>山间天气</h3><span id="weatherNote">晴朗</span></div>
+        <div class="weather-grid" id="weathers"><button data-weather="clear" class="selected">☀ 晴朗</button><button data-weather="cloudy">☁ 多云</button><button data-weather="fog">≋ 薄雾</button><button data-weather="rain">☂ 山雨</button><button data-weather="snow">❄ 飘雪</button></div>
+        <label class="switch-row">天气自然变化 <input id="weatherAuto" type="checkbox" checked><span class="switch"></span></label>
+        <div class="field-title"><h3>画面品质</h3></div><select id="quality" aria-label="画面品质"><option value="low">轻盈 · 低负载</option><option value="medium" selected>均衡 · 推荐</option><option value="high">细腻 · 高画质</option></select>
+        <p class="panel-note">一天约 12 分钟，一个季节约 6 分钟。<br>也可以把时光停在你最喜欢的一刻。</p>
+      </div>
+      <div data-tabpage="life" hidden>
+        <div class="field-title"><h3>山居伙伴</h3><span>靠近后按 E 相伴</span></div>
+        <div class="animal-card"><span>♞</span><div><h3>踏雪 · 你的马</h3><p id="horseStatus">在村口等你，一起去远方。</p></div><button id="callHorse">唤马</button></div>
+        <div class="animal-card"><span>♧</span><div><h3>阿旺 · 牧羊犬</h3><p id="dogStatus">在村中玩耍，等待与你相识。</p></div><button id="callDog">呼唤</button></div>
+        <div class="animal-card"><span>♜</span><div><h3>高原牦牛</h3><p id="yakStatus">草甸上有 5 头牦牛。</p></div><button id="feedYak">喂牧草</button></div>
+        <p class="panel-note">采集草甸里的牧草，可以喂给牦牛。<br>亲近阿旺后，它会陪你漫步山谷。<br>骑马时按 R 下马，或按“下马”按钮。</p>
+        <div class="field-title"><h3>植物采集册</h3><span id="totalPlants">0 株</span></div><div id="inventory"></div>
+        <p class="panel-note">植物与背包进度保存在当前浏览器。<br>被采集的植物约一分钟后重新生长。</p>
+      </div>
+      <div data-tabpage="journey" hidden>
+        <div class="field-title"><h3>去山野走走</h3><span>选择地点可直接前往</span></div>
+        <div id="destinations"></div>
+        <div class="field-title"><h3>漫游印记</h3><span id="discoveries">0 / 6</span></div><div id="stamps"></div>
+        <button class="text-button" id="homeBtn">↶ 回到村口</button>
+      </div>
+    </aside>
+    <section id="mapPanel" class="panel map-panel" hidden><div class="panel-head"><div><span class="eyebrow">A MAP OF SLOW DAYS</span><h2>山谷漫游图</h2></div><button class="close-button" data-close="mapPanel" aria-label="关闭地图">×</button></div><canvas id="mapCanvas" width="620" height="560" aria-label="山谷地图"></canvas><p class="panel-note">圆点是你的位置 · 点击标记前往<br>向北翻过松林，雪山就在眼前。</p><div id="mapLocations"></div></section>
+    <section id="helpPanel" class="panel" hidden><div class="panel-head"><div><span class="eyebrow">TAKE YOUR TIME</span><h2>慢慢来，山一直在</h2></div><button class="close-button" data-close="helpPanel" aria-label="关闭操作指南">×</button></div><div class="help-list"><p><kbd>W A S D</kbd> 或方向键 · 自由行走</p><p><kbd>鼠标拖动</kbd> 环顾 · 滚轮调整视野</p><p><kbd>点击画面</kbd> 锁定鼠标环顾 · Esc 释放</p><p><kbd>Shift</kbd> 快走 / 骑马快跑</p><p><kbd>Space</kbd> 跳跃 · 山坡会自动攀行</p><p><kbd>E</kbd> 采集 / 喂牦牛 / 亲近狗 / 骑马</p><p><kbd>R</kbd> 骑马 / 下马</p><p><kbd>M</kbd> 地图 <kbd>J</kbd> 手记 <kbd>P</kbd> 拍照</p><p><kbd>Esc</kbd> 释放鼠标或关闭面板</p></div><p class="panel-note">没有任务倒计时，也没有必须抵达的终点。<br>遇见草木、动物和风景，就停一停。</p></section>
+    <div id="touchControls" hidden><div id="joystick" aria-label="移动摇杆"><i></i></div><div class="touch-actions"><button id="touchRide" aria-label="骑马或下马">♞</button><button id="touchInteract">互动 E</button><button id="touchMap">地图</button></div></div>
+    <button id="dismountBtn" hidden>下马 <kbd>R</kbd></button>
+  </main>
+  <footer><div class="season-indicator"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M5 5l14 14M5 19 19 5"/><circle cx="12" cy="12" r="5"/></svg><span id="footerSeason">春 · 山花初醒</span><span class="divider"></span><span id="footerWeather">晴朗</span><span class="divider"></span><time id="clock">08:30</time></div><div class="footer-right"><button id="mapBtn"><svg viewBox="0 0 24 24"><path d="m2 5 7-3 6 3 7-3v17l-7 3-6-3-7 3V5Zm7-3v17m6-14v17"/></svg>山谷地图 <kbd>M</kbd></button><span id="saveState">此处，时光很慢</span></div></footer>
+  <script type="module" src="./app.js"></script>
+</body></html>
+
