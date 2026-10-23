@@ -70,3 +70,7 @@
 
 Three.js © 2010–2024 three.js authors，MIT。参见 `dist/vendor/THREE-LICENSE.txt`。
 界面可选字体 Noto Serif SC，SIL Open Font License，由 Google Fonts 托管。Tidewater CPU 辅助函数 © 2026 DRG Software Solutions LLC，MIT，详见 `CREDITS.md` 和 `dist/vendor/tidewater/LICENSE.txt`。其他场景几何、程序纹理与合成环境音均由本项目生成。
+
+## 跨设备继续
+
+完整迁移说明见 [docs/CONTINUE.md](docs/CONTINUE.md)。云端下载入口：https://snowvalley-retreat.docilegoose18.chatgpt.site/project-backup.html 。游戏进度目前仍是浏览器本地存档。
