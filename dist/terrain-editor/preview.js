@@ -1,5 +1,5 @@
 import * as THREE from '../vendor/three.module.js';
-import{elevationAt,colors}from'./model.js';
+import{elevationAt,colors}from'./model.js?v=2';
 const stops=[[1800,'#7f9f7a'],[2800,'#8fa77d'],[3500,'#a3b88a'],[4200,'#b8ba91'],[4800,'#aaa992'],[5300,'#c4c9b9'],[6100,'#eef0e5'],[9000,'#f6f6ee']];
 const tint=h=>{let i=stops.findIndex(p=>p[0]>=h);if(i<=0)return new THREE.Color(stops[0][1]);let a=stops[i-1],b=stops[i];return new THREE.Color(a[1]).lerp(new THREE.Color(b[1]),(h-a[0])/(b[0]-a[0]));};
 export class TerrainPreview{

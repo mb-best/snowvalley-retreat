@@ -1,6 +1,6 @@
 {
   "schema": "snowvalley-terrain/1",
-  "title": "雪隐山居 · 山谷地形",
+  "title": "雪隐山居 · 云岫山境",
   "revision": 1,
   "bounds": {
     "widthKm": 20,
@@ -9159,7 +9159,7 @@
     {
       "id": "forest-west",
       "type": "forest",
-      "name": "西麓森林",
+      "name": "听松林",
       "points": [
         [
           0,
@@ -9200,7 +9200,7 @@
     {
       "id": "forest-east",
       "type": "forest",
-      "name": "东麓森林",
+      "name": "青岚林",
       "points": [
         [
           12.7,
@@ -9249,7 +9249,7 @@
     {
       "id": "grassland-ne",
       "type": "grassland",
-      "name": "东北草原",
+      "name": "风眠原",
       "points": [
         [
           11.8,
@@ -9302,7 +9302,7 @@
     {
       "id": "meadow-west",
       "type": "meadow",
-      "name": "西坡草甸",
+      "name": "鹿鸣甸",
       "points": [
         [
           1,
@@ -9343,7 +9343,7 @@
     {
       "id": "snow-sw",
       "type": "snow",
-      "name": "高山雪坡",
+      "name": "卧雪坡",
       "points": [
         [
           3.3,
@@ -9388,7 +9388,7 @@
     {
       "id": "valley-south",
       "type": "meadow",
-      "name": "南侧高谷",
+      "name": "归云谷",
       "points": [
         [
           12.6,
@@ -9461,7 +9461,7 @@
     {
       "id": "lake-north",
       "type": "lake",
-      "name": "北侧高山湖",
+      "name": "映雪湖",
       "points": [
         [
           7.7,
@@ -9526,7 +9526,7 @@
     {
       "id": "lake-east",
       "type": "lake",
-      "name": "草原海子",
+      "name": "风镜湖",
       "points": [
         [
           15.35,
@@ -9591,7 +9591,7 @@
     {
       "id": "lake-south",
       "type": "lake",
-      "name": "南侧海子",
+      "name": "藏月湖",
       "points": [
         [
           14.08,
@@ -9656,7 +9656,7 @@
     {
       "id": "river-north",
       "type": "river",
-      "name": "西谷河",
+      "name": "松影河",
       "points": [
         [
           5.1,
@@ -9701,7 +9701,7 @@
     {
       "id": "river-east",
       "type": "river",
-      "name": "草原溪流",
+      "name": "眠风溪",
       "points": [
         [
           11.8,
@@ -9758,7 +9758,7 @@
     {
       "id": "river-south",
       "type": "river",
-      "name": "南谷溪流",
+      "name": "清音溪",
       "points": [
         [
           12.2,
@@ -9815,7 +9815,7 @@
     {
       "id": "ridge-main",
       "type": "ridge",
-      "name": "中央主脊",
+      "name": "雪隐脊",
       "points": [
         [
           8.9,
@@ -9851,7 +9851,7 @@
     {
       "id": "ridge-west",
       "type": "ridge",
-      "name": "西侧山脊",
+      "name": "听雪岭",
       "points": [
         [
           0.4,
@@ -9883,7 +9883,7 @@
     {
       "id": "ridge-sw",
       "type": "ridge",
-      "name": "西南山脊",
+      "name": "栖霞岭",
       "points": [
         [
           3.3,
@@ -9911,7 +9911,7 @@
     {
       "id": "ridge-east",
       "type": "ridge",
-      "name": "东侧山脊",
+      "name": "照岚岭",
       "points": [
         [
           10.3,
@@ -9939,7 +9939,7 @@
     {
       "id": "ridge-link",
       "type": "ridge",
-      "name": "东向支脊",
+      "name": "云桥脊",
       "points": [
         [
           8.9,
@@ -9959,7 +9959,7 @@
     {
       "id": "trail-west",
       "type": "trail",
-      "name": "西谷步道",
+      "name": "寻松古道",
       "points": [
         [
           6.15,
@@ -9999,7 +9999,7 @@
     {
       "id": "trail-east",
       "type": "trail",
-      "name": "东谷步道",
+      "name": "循溪小径",
       "points": [
         [
           18.5,
@@ -10035,7 +10035,7 @@
     {
       "id": "main-peak",
       "type": "peak",
-      "name": "主峰",
+      "name": "雪隐峰",
       "points": [
         [
           8.9,
@@ -10048,7 +10048,7 @@
     {
       "id": "west-peak",
       "type": "peak",
-      "name": "西侧卫峰",
+      "name": "听雪峰",
       "points": [
         [
           3.3,
@@ -10061,7 +10061,7 @@
     {
       "id": "sw-peak",
       "type": "peak",
-      "name": "西南卫峰",
+      "name": "栖霞峰",
       "points": [
         [
           3.6,
@@ -10074,7 +10074,7 @@
     {
       "id": "south-peak",
       "type": "peak",
-      "name": "南侧卫峰",
+      "name": "望归峰",
       "points": [
         [
           7.2,
@@ -10087,7 +10087,7 @@
     {
       "id": "north-peak",
       "type": "peak",
-      "name": "北侧卫峰",
+      "name": "凝霜峰",
       "points": [
         [
           8.95,
@@ -10100,7 +10100,7 @@
     {
       "id": "east-peak",
       "type": "peak",
-      "name": "东侧卫峰",
+      "name": "照岚峰",
       "points": [
         [
           13.8,
@@ -10113,7 +10113,7 @@
     {
       "id": "village-nw",
       "type": "village",
-      "name": "西北村",
+      "name": "栖云村",
       "points": [
         [
           6.15,
@@ -10126,7 +10126,7 @@
     {
       "id": "village-west",
       "type": "village",
-      "name": "西谷村",
+      "name": "松烟村",
       "points": [
         [
           0.7,
@@ -10139,7 +10139,7 @@
     {
       "id": "village-se",
       "type": "village",
-      "name": "东南村",
+      "name": "溪隐村",
       "points": [
         [
           18.5,
@@ -10150,5 +10150,6 @@
       "elevation": 2000
     }
   ],
-  "notes": "根据手绘草图模拟的地形设计，非实测地理数据。草图中的山峰、村落和海子高程为可修改的设计约束。等高线采用基准线形与位移约束，避免网格量化产生阶梯；区域内的峰点和湖面高程优先。"
+  "notes": "根据手绘草图模拟的地形设计，非实测地理数据。草图中的山峰、村落和海子高程为可修改的设计约束。等高线采用基准线形与位移约束，避免网格量化产生阶梯；区域内的峰点和湖面高程优先。",
+  "nameSetVersion": 1
 }

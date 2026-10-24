@@ -1,5 +1,23 @@
 // Coordinates are kilometres east/south from the north-west corner. Elevations are metres.
 export const WIDTH=20, HEIGHT=16, SCHEMA='snowvalley-terrain/1';
+export const MAP_TITLE='雪隐山居 · 云岫山境';
+export const PLACE_NAMES={
+ 'forest-west':'听松林','forest-east':'青岚林',
+ 'grassland-ne':'风眠原','meadow-west':'鹿鸣甸','snow-sw':'卧雪坡','valley-south':'归云谷',
+ 'lake-north':'映雪湖','lake-east':'风镜湖','lake-south':'藏月湖',
+ 'river-north':'松影河','river-east':'眠风溪','river-south':'清音溪',
+ 'ridge-main':'雪隐脊','ridge-west':'听雪岭','ridge-sw':'栖霞岭','ridge-east':'照岚岭','ridge-link':'云桥脊',
+ 'trail-west':'寻松古道','trail-east':'循溪小径',
+ 'main-peak':'雪隐峰','west-peak':'听雪峰','sw-peak':'栖霞峰','south-peak':'望归峰','north-peak':'凝霜峰','east-peak':'照岚峰',
+ 'village-nw':'栖云村','village-west':'松烟村','village-se':'溪隐村',
+};
+// Upgrade the existing browser draft in place: only names and naming metadata change.
+export function nameDraft(doc){
+ if(doc.nameSetVersion>=1)return false;
+ const extra={peak:['观雪峰','眠云峰','枕霞峰'],village:['枕石村','晚晴村','云归村'],forest:['溪照林','疏影林','晚翠林'],grassland:['晴风原','云舒原'],meadow:['花眠甸','晴鹿甸'],snow:['凝雪坡','素月坡'],lake:['月汀湖','栖霞湖','澄云湖'],river:['漱石溪','云归溪'],ridge:['眠云岭','远岚岭'],trail:['问山径','拾光古道'],label:['听风处','云深处']},counts={};
+ for(let f of doc.features){if(f.type==='contour')continue;if(PLACE_NAMES[f.id])f.name=PLACE_NAMES[f.id];else{let n=counts[f.type]||0,bank=extra[f.type]||['云深处'];f.name=bank[n%bank.length]+(n>=bank.length?'·'+(Math.floor(n/bank.length)+1):'');counts[f.type]=n+1;}}
+ doc.title=MAP_TITLE;doc.nameSetVersion=1;return true;
+}
 export const clone=v=>JSON.parse(JSON.stringify(v));
 export const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 export const kinds={contour:'等高线',forest:'森林范围',meadow:'草甸范围',grassland:'草原范围',snow:'雪坡范围',lake:'湖岸范围',river:'河流',ridge:'山脊',trail:'步道',peak:'山峰',village:'村落',label:'注记'};
@@ -50,7 +68,7 @@ export function defaultFeatures(){return[
   feature('village-nw','village','西北村',[[6.15,2.9]],{elevation:3000}),
   feature('village-west','village','西谷村',[[.7,9.4]],{elevation:3000}),
   feature('village-se','village','东南村',[[18.5,11.4]],{elevation:2000}),
-];}
+].map(f=>({...f,name:PLACE_NAMES[f.id]||f.name}));}
 // Polygon / polyline geometry shared by editor, height solver and exported blueprint.
 export function inside(p,poly){let yes=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++)if((poly[i][1]>p[1])!==(poly[j][1]>p[1])&&p[0]<(poly[j][0]-poly[i][0])*(p[1]-poly[i][1])/(poly[j][1]-poly[i][1])+poly[i][0])yes=!yes;return yes;}
 export function distanceSegment(p,a,b){let dx=b[0]-a[0],dy=b[1]-a[1],t=clamp(((p[0]-a[0])*dx+(p[1]-a[1])*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy);}
@@ -82,7 +100,7 @@ export function contoursFrom(field,step=200){
  paths.forEach((p,i)=>features.push(feature(`contour-${level}-${i}`,'contour',`${level.toLocaleString()} m 等高线`,p.points,{closed:p.closed,elevation:level})));
  }return features;
 }
-export function makeDocument(){let features=defaultFeatures(),field=fieldFor(features),contours=contoursFrom(field);for(let f of contours){f.baselinePoints=clone(f.points);f.baselineElevation=f.elevation;}return{schema:SCHEMA,title:'雪隐山居 · 山谷地形',revision:1,bounds:{widthKm:WIDTH,heightKm:HEIGHT,areaKm2:320,origin:'north-west',xAxis:'east',yAxis:'south'},units:{horizontal:'km',elevation:'m'},contourInterval:200,features:[...contours,...features],notes:'根据手绘草图模拟的地形设计，非实测地理数据。草图中的山峰、村落和海子高程为可修改的设计约束。等高线采用基准线形与位移约束，避免网格量化产生阶梯；区域内的峰点和湖面高程优先。'};}
+export function makeDocument(){let features=defaultFeatures(),field=fieldFor(features),contours=contoursFrom(field);for(let f of contours){f.baselinePoints=clone(f.points);f.baselineElevation=f.elevation;}return{schema:SCHEMA,title:MAP_TITLE,nameSetVersion:1,revision:1,bounds:{widthKm:WIDTH,heightKm:HEIGHT,areaKm2:320,origin:'north-west',xAxis:'east',yAxis:'south'},units:{horizontal:'km',elevation:'m'},contourInterval:200,features:[...contours,...features],notes:'根据手绘草图模拟的地形设计，非实测地理数据。草图中的山峰、村落和海子高程为可修改的设计约束。等高线采用基准线形与位移约束，避免网格量化产生阶梯；区域内的峰点和湖面高程优先。'};}
 export function validateDocument(doc){
  if(!doc||doc.schema!==SCHEMA||doc.bounds?.widthKm!==20||doc.bounds?.heightKm!==16||!Array.isArray(doc.features)||doc.features.length>1000)throw Error('请选择本编辑器导出的 20 × 16 km 地形设计 JSON。');
  let ids=new Set(),total=0;

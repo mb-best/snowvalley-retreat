@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f4f3ec"><meta name="description" content="按手绘草图构建的 20 × 16 公里山谷地形工作台。编辑等高线、森林、草原、湖岸和村落，导出可用于重建世界的地形蓝图。">
-<title>山谷地形工作台 · 雪隐山居</title><link rel="icon" href="./icon.svg"><link rel="stylesheet" href="./terrain-editor/editor.css?v=1">
+<title>云岫山境 · 雪隐山居地形工作台</title><link rel="icon" href="./icon.svg"><link rel="stylesheet" href="./terrain-editor/editor.css?v=2">
 </head>
 <body>
 <header class="app-header">
  <a class="identity" href="./terrain-editor.html"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m3 30 11-20 7 12 5-8 12 16M10 17l4 3 3-3M22 20l4 4 4-3M4 35h33"/></svg><span>山谷地形工作台<small>SNOWVALLEY / LANDSCAPE ATELIER</small></span></a>
- <div class="document-info"><span class="draft-tag">地形草案 01</span><span id="saveState" role="status">正在铺开地图…</span></div>
+ <div class="document-info"><span class="draft-tag" id="draftName">云岫山境 · 草案 01</span><span id="saveState" role="status">正在铺开地图…</span></div>
  <div class="header-actions"><button id="helpButton" class="quiet-button">使用说明</button><a class="quiet-button back-link" href="./sunny-valley.html?view=cottage">返回山谷 ↗</a><button id="exportButton" class="primary">导出设计 <span>↓</span></button></div>
 </header>
 <div class="workbench">
@@ -35,7 +35,7 @@
     <symbol id="village" viewBox="-16 -15 32 30"><path d="M-13 1v10h10V1m4-5v12h11V-4M-16 1l8-8 8 8M-2-4l8-8 8 8M-10 11V5h3v6M4 8V1h3v7" fill="#f5e4bf" stroke="#805e40" stroke-width="1.4" stroke-linejoin="round"/></symbol>
     <symbol id="peak" viewBox="-12 -12 24 24"><path d="m0-10 10 18H-10Z" fill="#f5f1e7" stroke="#746b5b" stroke-width="1.4"/><path d="m-4-2 4 2 3-4" fill="none" stroke="#746b5b"/></symbol>
    </defs><g id="worldMap"><g id="clippedMap" clip-path="url(#mapClip)"><image id="reliefImage" width="2000" height="1600"/><g id="regionLayer"></g><rect id="gridLayer" width="2000" height="1600" fill="url(#kmGrid)"/><g id="vegetationLayer" pointer-events="none"></g><g id="contourLayer"></g><g id="lineLayer"></g><image id="sketchOverlay" href="./terrain-editor/assets/sketch.jpg" width="2000" height="1600" preserveAspectRatio="none" opacity=".28" display="none" pointer-events="none"/><g id="annotationLayer"></g><g id="hitLayer"></g><g id="selectionLayer"></g><g id="drawingLayer"></g></g><g id="mapFrame" pointer-events="none"></g></g></svg>
-   <div class="map-title"><p>SNOWVALLEY · TERRAIN STUDY</p><span>山 川 草 木 ， 皆 可 重 绘</span></div>
+   <div class="map-title"><p>SNOWVALLEY · TERRAIN STUDY</p><span id="mapTitle">云岫山境</span></div>
    <div class="compass" aria-hidden="true"><span>N</span><svg viewBox="0 0 40 50"><path d="M20 3 32 38 20 30 8 38Z"/><path d="M20 3v27"/></svg></div>
    <div class="zoom-controls"><button id="zoomIn" aria-label="放大地图">+</button><span id="zoomLabel">100%</span><button id="zoomOut" aria-label="缩小地图">−</button><button id="fitButton" aria-label="适应画布" title="适应画布">⤢</button></div>
    <div id="modeHint" class="mode-hint">选择一条等高线或范围线，拖动节点调整</div>
@@ -50,5 +50,5 @@
 <dialog id="exportDialog"><button class="dialog-close" data-close="exportDialog" aria-label="关闭导出">×</button><p class="eyebrow">把这一版山谷带走</p><h2>导出地图与地形</h2><p>调整完成后，把“设计 JSON”交给我，就能按这张地图继续制作世界。</p><div class="export-options"><button id="downloadDesign"><b>设计 JSON <span>↘</span></b><small>可重新导入 · 全部节点与高程 · 跨设备编辑</small></button><button id="downloadWorld"><b>世界重建数据 <span>↘</span></b><small>50 m 高度网格 · 米制坐标 · 地形分区与水系</small></button><button id="downloadSVG"><b>地图 SVG <span>↘</span></b><small>完整彩色地图 · 可缩放 · 保留矢量线条</small></button><button id="downloadPNG"><b>地图 PNG <span>↘</span></b><small>2,400 × 1,920 像素 · 便于查看与标注</small></button><button id="downloadHeight"><b>16 位高度图 PGM <span>↘</span></b><small>401 × 321 · 0–9,000 m · 用于地形工具</small></button></div><p class="subtle">当前地图为设计模拟。等高线交叉、湖面与邻近山体的高差，请结合三维预览检查。</p></dialog>
 <dialog id="previewDialog" class="preview-dialog"><div class="preview-header"><span><b>地形体块预览</b><small>20 × 16 km · 高度比例 1:1</small></span><label>高度夸张<select id="verticalScale"><option value="1">1 ×</option><option value="1.5">1.5 ×</option><option value="2">2 ×</option></select></label><button data-close="previewDialog" class="quiet-button">返回编辑 ×</button></div><div id="previewScene"></div><p class="preview-note" id="previewNote">拖动旋转 · 滚轮缩放 · 这里只检查地形体块</p></dialog>
 <div id="toast" role="status" aria-live="polite"></div>
-<script type="module" src="./terrain-editor/editor.js?v=1"></script>
+<script type="module" src="./terrain-editor/editor.js?v=2"></script>
 </body></html>
