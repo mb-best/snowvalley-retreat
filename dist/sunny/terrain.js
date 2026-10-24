@@ -6,6 +6,8 @@ export function noise(x,z){return Math.sin(x*.63+Math.sin(z*.47))*Math.cos(z*.57
 export const riverX=z=>3+7*Math.sin(z*.032)-z*.075+1.1*Math.sin(z*.083);
 export const waterY=z=>.22-z*.008;
 export const riverWidth=z=>3.2+.5*Math.sin(z*.062+2)+.2*Math.sin(z*.2);
+export const heroRocks=[[31,1,1.8],[43,-1,2.25],[6,-1,1.15],[-5,1,1.65],[-28,-1,1.7],[55,1,1.5]].map(([z,side,r])=>({x:riverX(z)+side*(riverWidth(z)+1.1),z,r}));
+export const bareRock=(x,z,padding=.1)=>heroRocks.some(p=>Math.hypot(x-p.x,z-p.z)<p.r*.88+padding);
 export function groundHeight(x,z){
   let h=1.8+1.35*Math.sin(x*.031+1)*Math.cos(z*.023)+.65*Math.sin(z*.064)+.045*noise(x*.6,z*.6);
   h+=4.5*Math.exp(-((x-30)**2/800+(z+5)**2/1600));
@@ -15,7 +17,8 @@ export function groundHeight(x,z){
   const pad=1-smooth(4.8,10,Math.hypot((x+19)*.9,z+19));
   h=mix(h,3.2,pad);
   const d=Math.abs(x-riverX(z)),w=riverWidth(z);
-  return mix(waterY(z)-.65,h,smooth(w-.6,w+6.0,d));
+  const channel=mix(waterY(z)-.65,h,smooth(w-.6,w+6.0,d));
+  return mix(h,channel,1-smooth(-115,-195,z));
 }
 const route=[[-36,90],[-28,57],[-13,31],[4,9],[-10,-4],[-19,-12]];
 export const pathPoints=[];
@@ -34,6 +37,7 @@ export function walkHeight(x,z){if(Math.abs(z-bridge.z)<1.75&&Math.abs(x-bridge.
 export function canWalk(x,z){
   if(x < -92 || x>92 || z < -120 || z>105)return false;
   if(Math.abs(x+19)<4.25&&Math.abs(z+19)<4.2)return false;
+  if(bareRock(x,z,.15))return false;
   const inBridge=Math.abs(z-bridge.z)<1.5&&Math.abs(x-bridge.x)<6.8;
   return inBridge||Math.abs(x-riverX(z))>riverWidth(z)-.15;
 }

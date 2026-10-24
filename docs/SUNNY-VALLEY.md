@@ -4,11 +4,22 @@
 
 ## 这一版
 
+### 第二轮美术精修 · 2026-10-24
+
+- 岩石改为不规则矿物形态；增加裂隙、粗糙凹凸、浅色矿脉、湿润暗部、地衣和顺着朝向分布的青苔。石体下部延伸入土，重要石块周围的草木避让。
+- 树木改为弯曲、渐细的主干和枝条，增加露根；引入 CC0 树皮颜色与法线材质，并混入白桦。树冠由内部体积与多层绘制叶簇构成，弱化规则球团。
+- 花朵采用弯曲花瓣、花心和茎叶；增加三叶草、蕨类、灌草与路边落花。草叶使用多段曲面。
+- 远山采用连续三维山体、山脊与沟谷，并根据坡度与高度分布积雪；增加山麓林带、天空渐变和绘制云层。
+- 屋顶改用弧形瓦，木构与桥面增加材质变化；小屋加入常春藤、细化的花箱和会轻晃的风铃。
+- 新增“青苔石岸”近景入口。快捷键 1—4 可前往四个地点。
+
+目标是自然的动漫背景美术和可近看细节，保留实时三维漫游。程序材质和造型仍可继续针对具体镜头精修。
+
 - 一座可以走近观看的半木构小屋：陶瓦屋顶、木窗、花箱、门廊、常春藤、石烟囱和炊烟。
 - 连续的浅溪、动画水纹、岸边泡沫与圆石，一座可以实际走过的拱形木桥。
 - 白色、粉色、黄色与紫色花坡，成组的阔叶树、灌木和风动草地。
 - 自由行走、快走、跳跃、房屋/树干/溪流边界碰撞、触屏摇杆。
-- 溪畔、小屋、花坡三个观景视角；漫游时也可以快速前往。
+- 溪畔、小屋、花坡、石岸四个观景视角；漫游时也可以快速前往。
 - 自然环境合成音、照片下载、实时位置小地图、画质切换。
 - 场景为固定的晴朗夏日。浏览器性能和显示器色彩会影响体验。
 
@@ -23,12 +34,15 @@
 | `dist/sunny/terrain.js` | 地形、河道、道路、行走边界 |
 | `dist/sunny/plants.js` | 树木、花、实例化草地、微风 |
 | `dist/sunny/landscape.js` | 小屋、木桥、溪流、山景、云、蝴蝶 |
+| `dist/sunny/art-materials.js` | 青苔矿物、树皮、绘制叶片、木材与陶瓦材质 |
+| `dist/sunny/vegetation.js` | 弯曲枝干、叶簇、花瓣、茎叶、蕨类、地被 |
+| `dist/sunny/vista.js` | 石岸、立体雪山、山麓林带、天空与小屋细节 |
 | `dist/sunny/main.js` | 渲染、灯光、输入、声音、地图与照片 |
 | `dist/sunny/assets/` | GitHub 开源材质与授权文件 |
 
 ## GitHub 资源与参考
 
-1. **EZ-Tree / Daniel Greenheck**：https://github.com/dgreenheck/ez-tree 。使用其橡树叶片材质 `src/app/public/textures/leaves/oak.png`；白蜡叶材质也随源码保留。项目 MIT 许可，叶片遵循项目许可；完整许可在 `dist/sunny/assets/EZ-TREE-LICENSE.txt`。未引入树木生成库本身，树形、枝干与树冠由本样板生成。
+1. **EZ-Tree / Daniel Greenheck**：https://github.com/dgreenheck/ez-tree 。首版使用的橡树与白蜡叶片仍随源码保留，MIT 许可在 `dist/sunny/assets/EZ-TREE-LICENSE.txt`。本轮主要叶簇纹理由代码绘制；树皮颜色和法线图片通过 EZ-Tree 获取，原始来源为 ambientCG Bark004、CC0 许可，详见 `dist/sunny/assets/BARK-CC0.md`。未引入树木生成库本身。
 2. **threejs-grass-water-shaders / boona13**：https://github.com/boona13/threejs-grass-water-shaders 。阅读并参考了实例化草叶、根部固定/叶尖风动与色彩梯度的实现思路。当前 shader 为适配本地 Three.js r160 的独立实现。原项目 MIT 许可保留在 `dist/sunny/assets/SHADER-REFERENCE-LICENSE.txt`。
 3. **Three.js**：继续使用项目本地 r160.1，MIT 许可在 `dist/vendor/THREE-LICENSE.txt`。
 4. 调研了 https://github.com/norio/three-stylized-water 。其 WebGPU/TSL 路线与本项目的 WebGL 兼容目标不同，此样板未引入该实现。

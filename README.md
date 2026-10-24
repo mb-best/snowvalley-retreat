@@ -2,7 +2,7 @@
 
 ## 晴日山谷 · 独立美术样板
 
-打开 [`dist/sunny-valley.html`](dist/sunny-valley.html)，或在本地服务器访问 `/sunny-valley.html`。这是可自由漫游的独立晴日场景：林间小屋、流动溪水、拱形木桥、花坡与成组树林。采用本地 Three.js、实例化植被、树叶材质、暖阳阴影和远景雾。电脑使用 WASD / 方向键行走、鼠标拖动环顾、Shift 快走、空格跳跃；触屏有摇杆与跳跃按钮。顶部的三个地点可切换观景视角，进入后可前往相应区域。
+打开 [`dist/sunny-valley.html`](dist/sunny-valley.html)，或在本地服务器访问 `/sunny-valley.html`。这是可自由漫游的独立晴日场景：林间小屋、流动溪水、拱形木桥、花坡与成组树林。采用本地 Three.js、实例化植被、树叶材质、暖阳阴影和远景雾。电脑使用 WASD / 方向键行走、鼠标拖动环顾、Shift 快走、空格跳跃；触屏有摇杆与跳跃按钮。顶部的四个地点可切换观景视角，进入后可前往相应区域。
 
 详细说明和资源来源见 [`docs/SUNNY-VALLEY.md`](docs/SUNNY-VALLEY.md)。
 

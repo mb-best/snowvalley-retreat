@@ -1,13 +1,16 @@
 import * as T from '../vendor/three.module.js';
-import {random,noise,groundHeight,riverX,riverWidth,pathDistance,clamp} from './terrain.js';
+import {random,noise,groundHeight,riverX,riverWidth,pathDistance,clamp,bareRock} from './terrain.js?v=2';
+import {artTime} from './art-materials.js?v=2';
 const rnd=random(368),dummy=new T.Object3D(),color=new T.Color(),TAU=Math.PI*2;
-export const windTime={value:0};
-function join(geometries){const pos=[],norm=[],uv=[];for(const g of geometries){const a=g.index?g.toNonIndexed():g;pos.push(...a.attributes.position.array);norm.push(...a.attributes.normal.array);if(a.attributes.uv)uv.push(...a.attributes.uv.array)}let g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));g.setAttribute('normal',new T.Float32BufferAttribute(norm,3));if(uv.length===pos.length/3*2)g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));return g}
+export const windTime=artTime;
+export function join(geometries){const pos=[],norm=[],uv=[],colors=[];for(const g of geometries){const a=g.index?g.toNonIndexed():g;pos.push(...a.attributes.position.array);norm.push(...a.attributes.normal.array);if(a.attributes.uv)uv.push(...a.attributes.uv.array);if(a.attributes.color)colors.push(...a.attributes.color.array)}let g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));g.setAttribute('normal',new T.Float32BufferAttribute(norm,3));if(uv.length===pos.length/3*2)g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));if(colors.length===pos.length)g.setAttribute('color',new T.Float32BufferAttribute(colors,3));return g}
 export function makeMesh(g,m,parent,x=0,y=0,z=0){let o=new T.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
 export const matte=(c)=>new T.MeshLambertMaterial({color:c});
 export function beam(parent,a,b,r1,r2,material,segments=7){let av=new T.Vector3(...a),bv=new T.Vector3(...b),delta=bv.clone().sub(av),m=makeMesh(new T.CylinderGeometry(r2,r1,delta.length(),segments),material,parent);m.position.copy(av).add(bv).multiplyScalar(.5);m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),delta.normalize());return m}
-function breeze(material,strength=.18,grass=false){
+export function breeze(material,strength=.18,grass=false){
+  const previous=material.onBeforeCompile;
   material.onBeforeCompile=shader=>{
+    previous(shader);
     shader.uniforms.uWindTime=windTime;
     shader.vertexShader='uniform float uWindTime; varying float vPlantY;\n'+shader.vertexShader;
     shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
@@ -28,14 +31,14 @@ export function addGrass(scene,lightweight=false){
   const triangles=[];
   for(let j=0;j<3;j++){
     let g=new T.BufferGeometry(),w=.025+j*.006,h=.39+j*.065;
-    g.setAttribute('position',new T.Float32BufferAttribute([-w,0,0,w,0,0,-w*.66,h*.52,-.045,w*.66,h*.52,-.045,.06,h,-.13],3));
-    g.setIndex([0,1,2,1,3,2,2,3,4]);g.computeVertexNormals();g.rotateY(j*2.09);g.translate(Math.cos(j*2.09)*.07,0,Math.sin(j*2.09)*.07);triangles.push(g);
+    g.setAttribute('position',new T.Float32BufferAttribute([-w,0,0,w,0,0,-w*.70,h*.40,-.012,w*.70,h*.40,-.012,-w*.32,h*.76,-.055,w*.32,h*.76,-.055,.035,h,-.13],3));
+    g.setIndex([0,1,2,1,3,2,2,3,4,3,5,4,4,5,6]);g.computeVertexNormals();let nn=g.attributes.normal;for(let k=0;k<nn.count;k++){let v=new T.Vector3(nn.getX(k)*.4,.8,nn.getZ(k)*.4).normalize();nn.setXYZ(k,v.x,v.y,v.z)}g.rotateY(j*2.09);g.translate(Math.cos(j*2.09)*.07,0,Math.sin(j*2.09)*.07);triangles.push(g);
   }
   const material=new T.MeshLambertMaterial({color:0xffffff,side:T.DoubleSide});breeze(material,.20,true);
-  const count=lightweight?27000:75000,mesh=new T.InstancedMesh(join(triangles),material,count);
+  const count=lightweight?24000:55000,mesh=new T.InstancedMesh(join(triangles),material,count);
   let i=0,attempt=0;const palette=['#79ad40','#88b546','#71a43d','#9abe51','#85b148'];
   while(i<count&&attempt++<count*9){let near=rnd()<.76,x=(rnd()-.5)*(near?118:190),z=(near?-62:-125)+rnd()*(near?147:230);
-    if(Math.abs(x-riverX(z))<riverWidth(z)+1.15||pathDistance(x,z)<1.9||Math.abs(x+19)<5.2&&Math.abs(z+19)<5.4)continue;
+    if(Math.abs(x-riverX(z))<riverWidth(z)+1.15||pathDistance(x,z)<1.9||Math.abs(x+19)<5.2&&Math.abs(z+19)<5.4||bareRock(x,z,.25))continue;
     if(noise(x*.13,z*.13)<-.48&&rnd()<.84)continue;
     let size=.6+rnd()*.65;dummy.position.set(x,groundHeight(x,z)-.025,z);dummy.rotation.set(0,rnd()*TAU,0);dummy.scale.setScalar(size);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.setColorAt(i,color.set(palette[Math.floor(rnd()*palette.length)]));i++;
   }
