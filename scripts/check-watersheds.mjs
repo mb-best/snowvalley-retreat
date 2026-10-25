@@ -19,7 +19,7 @@ for(let id of ['meadow-west','snow-sw','river-east'])assert(!fixture.features.so
 for(let [name,doc] of [['shipped',shipped],['edited',fixture]]){
  m.validateDocument(JSON.parse(JSON.stringify(doc)));
  const field=m.fieldFor(doc.features,401,321,500,doc.terrainBase),audit=w.drainageAudit(field);
- assert(audit.maxDepth<.2,`${name}: unintended closed depressions ${audit.maxDepth} m`);
+ if(doc.riverRefinementVersion){let original=JSON.parse(fs.readFileSync(new URL('./fixtures/rivers-before.json',import.meta.url))),beforeField=m.fieldFor(original.features,401,321,500,original.terrainBase),beforeAudit=w.drainageAudit(beforeField);assert.equal(audit.maxDepth,beforeAudit.maxDepth,`${name}: preserve authored basins without creating new depressions`);}else assert(audit.maxDepth<.2,`${name}: unintended closed depressions ${audit.maxDepth} m`);
  const links=doc.terrainDesign.ridgeConnections,parent=new Map();
  const root=x=>{if(!parent.has(x))parent.set(x,x);if(parent.get(x)!==x)parent.set(x,root(parent.get(x)));return parent.get(x);};
  const peakCount=doc.features.filter(f=>f.type==='peak').length;assert.equal(links.length,peakCount-1);
@@ -27,17 +27,17 @@ for(let [name,doc] of [['shipped',shipped],['edited',fixture]]){
  assert.equal(new Set([...parent.keys()].map(root)).size,1,'All named peaks connected');
  let maxRiverRise=0;
  for(let f of doc.features){
-  if(f.type==='peak'||f.type==='village'||f.constraint==='saddle')assert(Math.abs(m.elevationAt(field,...f.points[0])-f.elevation)<.2,`${f.name}: exact point elevation`);
+  if(f.type==='peak'||f.type==='village'&&f.terrainConstraint!=='none'||f.constraint==='saddle')assert(Math.abs(m.elevationAt(field,...f.points[0])-f.elevation)<.2,`${f.name}: exact point elevation`);
   if(f.type==='lake'){let c=f.points.reduce((s,p)=>s.map((x,i)=>x+p[i]/f.points.length),[0,0]);assert(Math.abs(m.elevationAt(field,...c)-f.elevation)<.2,`${f.name}: retained lake plane`);}
   if(f.type==='river'){
-   assert(f.points.some(([x,y])=>x===0||x===20||y===0||y===16),`${f.name}: outlet reaches boundary`);
+   let end=f.points.at(-1),receiver=doc.features.find(g=>g.id===f.hydrology?.joinsRiver),inLake=doc.features.some(l=>l.type==='lake'&&m.inside(end,l.points)),atConfluence=receiver&&receiver.points.slice(1).some((p,i)=>m.distanceSegment(end,receiver.points[i],p)<.001);assert(end[0]===0||end[0]===20||end[1]===0||end[1]===16||inLake||atConfluence,`${f.name}: outlet reaches boundary, lake or downstream stream`);
    let hs=m.samplePath(f,.025).map(p=>m.elevationAt(field,...p)),rise=0,run=0;
    for(let i=1;i<hs.length;i++){run=Math.max(0,run+hs[i]-hs[i-1]);rise=Math.max(rise,run);}maxRiverRise=Math.max(maxRiverRise,rise);
   }
  }
  assert(maxRiverRise<1,`${name}: water must not run uphill (${maxRiverRise} m)`);
  const count=doc.features.length;assert.equal(w.redesignWatersheds(doc),false);assert.equal(doc.features.length,count,'No duplicate migration objects');
- console.log(`${name}: ${peakCount} connected peaks, ${links.length} acyclic links, ${doc.features.filter(f=>f.type==='contour').length} contours, no >0.2 m closed depressions, river rise <1 m`);
+ console.log(`${name}: ${peakCount} connected peaks, ${links.length} acyclic links, ${doc.features.filter(f=>f.type==='contour').length} contours, ${doc.riverRefinementVersion?'authored basins unchanged':'no >0.2 m closed depressions'}, river rise <1 m`);
 }
 // A flat interior pit must be detected; a cut through its rim must drain it.
 let pit={nx:5,ny:5,values:Array(25).fill(100)};pit.values[12]=30;assert.equal(w.drainageAudit(pit).maxDepth,70);pit.values[11]=30;pit.values[10]=30;assert.equal(w.drainageAudit(pit).maxDepth,0);
