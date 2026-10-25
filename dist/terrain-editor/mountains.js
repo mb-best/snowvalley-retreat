@@ -1,4 +1,4 @@
-import{clone,clamp,fieldFor,elevationAt,contoursFrom,inside,distanceSegment}from'./model.js?v=3';
+import{clone,clamp,fieldFor,elevationAt,contoursFrom,inside,distanceSegment}from'./model.js?v=4';
 
 // A full-resolution elevation base preserves the user's valley design while we
 // rebuild the six summit masses. Subsequent contour edits deform this base.

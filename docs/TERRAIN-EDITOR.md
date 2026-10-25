@@ -44,3 +44,11 @@
 升级将当前地形和高程约束先求解为 401 × 321 的 50 m 高度底图，再重塑峰体、提取新的 200 m 等高线。文档增加 `terrainBase: {nx, ny, values}` 与 `mountainShapeVersion: 1`。底图是可编辑等高线的参考高程场，必须与设计 JSON 一并保存。二维阴影、三维预览、世界重建数据和 PGM 均使用这份底图，不会导出旧的圆顶山体。
 
 当前浏览器首次升级前，会在 `snowvalley-terrain-draft-v2-before-alpine` 留存原草案。升级操作加入当前撤销历史；`-alpine-applied` 标记防止用户撤销后刷新又被自动重做。
+
+## 连续山脉与垭口
+
+`ranges.js` 将六峰连接为五条可编辑的山脊骨架，覆盖七段峰间连接。抬高脊线两侧的坡面，保留尖峰、分水岭、波动的脊顶与谷地；路线绕开用户调整过的映雪湖、月汀湖等水体。峰点、峰高及原有村落、水体、植被、河流和步道图形均保留。
+
+新增雪隐垭口 5,360 m、听雪垭口 5,280 m、云桥垭口 5,120 m、归云垭口 5,080 m、松风垭口 5,020 m、照岚垭口 4,960 m、栖霞垭口 4,860 m。垭口使用 `type: label, constraint: saddle` 的点高程约束，可在侧栏选择、移动和改高程；山脊使用 `terrainRole: crest` 与基准节点，使拖动后能继续与地势联动。
+
+`rangeShapeVersion: 1` 记录本次升级，重提等高线并更新 `terrainBase`。浏览器在 `snowvalley-terrain-draft-v2-before-ranges` 保存连接山脉前草案，导出菜单可下载。`-ranges-applied` 标记防止主动恢复旧草案后又被自动升级。
