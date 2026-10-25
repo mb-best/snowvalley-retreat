@@ -114,3 +114,6 @@ export function redesignWatersheds(doc){
  doc.notes='云岫山境：参考阿尔卑斯山群的分水岭、冰川槽谷和支谷层级重新设计的虚构地形，非实测 DEM。主脊与支脉不闭合；宽山肩连接峰体，五处高垭口；各湖设出流谷。底图通过边界优先泛洪检查并整理非预期洼地。';
  doc.revision=(Number(doc.revision)||1)+1;doc.updatedAt=new Date().toISOString();return true;
 }
+
+// Shared geometric primitives for subsequent, local mountain-group revisions.
+export{smooth,curve,path,nearest,ridge,crest,condition,centre};

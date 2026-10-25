@@ -22,9 +22,9 @@ for(let [name,doc] of [['shipped',shipped],['edited',fixture]]){
  assert(audit.maxDepth<.2,`${name}: unintended closed depressions ${audit.maxDepth} m`);
  const links=doc.terrainDesign.ridgeConnections,parent=new Map();
  const root=x=>{if(!parent.has(x))parent.set(x,x);if(parent.get(x)!==x)parent.set(x,root(parent.get(x)));return parent.get(x);};
- assert.equal(links.length,5);
+ const peakCount=doc.features.filter(f=>f.type==='peak').length;assert.equal(links.length,peakCount-1);
  for(let e of links){let a=root(e.from),b=root(e.to);assert.notEqual(a,b,'No closed ridge cycle');parent.set(a,b);}
- assert.equal(new Set([...parent.keys()].map(root)).size,1,'All six peaks connected');
+ assert.equal(new Set([...parent.keys()].map(root)).size,1,'All named peaks connected');
  let maxRiverRise=0;
  for(let f of doc.features){
   if(f.type==='peak'||f.type==='village'||f.constraint==='saddle')assert(Math.abs(m.elevationAt(field,...f.points[0])-f.elevation)<.2,`${f.name}: exact point elevation`);
@@ -37,7 +37,7 @@ for(let [name,doc] of [['shipped',shipped],['edited',fixture]]){
  }
  assert(maxRiverRise<1,`${name}: water must not run uphill (${maxRiverRise} m)`);
  const count=doc.features.length;assert.equal(w.redesignWatersheds(doc),false);assert.equal(doc.features.length,count,'No duplicate migration objects');
- console.log(`${name}: six connected peaks, five acyclic links, ${doc.features.filter(f=>f.type==='contour').length} contours, no >0.2 m closed depressions, river rise <1 m`);
+ console.log(`${name}: ${peakCount} connected peaks, ${links.length} acyclic links, ${doc.features.filter(f=>f.type==='contour').length} contours, no >0.2 m closed depressions, river rise <1 m`);
 }
 // A flat interior pit must be detected; a cut through its rim must drain it.
 let pit={nx:5,ny:5,values:Array(25).fill(100)};pit.values[12]=30;assert.equal(w.drainageAudit(pit).maxDepth,70);pit.values[11]=30;pit.values[10]=30;assert.equal(w.drainageAudit(pit).maxDepth,0);
