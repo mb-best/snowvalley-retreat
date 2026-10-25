@@ -96,3 +96,22 @@
 当前文档标记 `peakClusterVersion: 2`，`terrainDesign.peakGroups` 保存三组峰群及调整参数，`ridgeConnections` 保存完整树状关系。首次迁移把完整旧版草案存入 IndexedDB：数据库 `snowvalley-terrain-backups`、对象仓库 `drafts`、键 `before-peak-clusters`；导出菜单中的“峰群调整前草案备份”可下载恢复。使用单独的备份空间，避免多个旧版高度网格耗尽当前草案的 localStorage 保存额度。`-clusters-applied` 标记用于尊重用户撤销或恢复旧稿的选择。
 
 验证：`node scripts/check-peak-clusters.mjs`，另运行 `node scripts/check-watersheds.mjs` 检查共同模型。覆盖三座山体体量确实降低、每组 2–3 座 3,900–4,500 m 的新峰、十四峰高程及独立峰顶、无闭合山脊环线、垭口低于相邻峰、湖岸与自定义森林保留、排水连通、溪流不逆坡、JSON 往返、迁移幂等以及新峰编辑后的高度响应。
+
+## 紧凑山系 04（当前版本）
+
+`compact-massif.js` 进一步收拢整个山系，而不是仅移动标注或继续在外围叠加山体。
+
+- 以雪隐峰为锚点，六座大峰之间的平面距离缩至当前草案的 78%；十四峰的峰高保持不变。
+- 八座低峰随各自主峰移动，再把相对主峰的外伸距离缩至原来的 55%。原有命名、峰群归属和数量保留。
+- 大峰之间的五处主鞍部抬高：雪隐 5,030 m、归云 5,480 m、听雪 4,900 m、松风 4,850 m、云桥 4,430 m。短距离连接与共同山肩形成连贯山体，避免深谷将大峰逐个割开。
+- 小鞍部随紧凑布局上调；相邻山肩实际支撑更高时，以连续地势整理鞍部，而不把固定低点硬压成凹坑。
+- 同时移除原位置的外伸山肩，将腾出的外围接回低海拔森林、草原与起伏山麓；湖岸、湖面、村落、植被范围和步道节点保留。湖泊所在的低谷是保留原高程的局部例外，不强行抬高水面。
+- 十四峰仍使用十三段无环骨架。抬高内部山肩后，重新整理必要的溪流走向，保持出山谷地与下降的水路。
+
+默认草案中，3,500 m 以上地形面积由约 118.8 km² 减至约 75.1 km²；依据当前用户地图可见要素构建的核对样本约由 112.9 km² 减至 73.0 km²。它是同一虚构高度网格下的设计比较，不代表实测占地或地质模拟。
+
+文档标记 `compactMassifVersion: 1`，`terrainDesign.compactLayout` 保存锚点与两个收拢比例，更新完整 `ridgeConnections`。首次更新前将旧版 JSON 保存在现有 IndexedDB 的 `before-compact-massif` 键；“山系收拢前草案备份”可导出。`-compact-applied` 标记防止撤销或主动恢复旧稿后自动重做。
+
+运行 `node scripts/check-compact-massif.mjs`，检查所有大峰间距与低峰外伸比例、峰高保持、主鞍部抬高、外围占地缩减、湖泊村落和自定义森林保留、树状连接、50 m 网格排水、溪流不逆坡、JSON 往返、幂等与编辑响应。共同模型另运行 `scripts/check-watersheds.mjs` 与 `scripts/check-peak-clusters.mjs`。
+
+`scripts/render-terrain-study.swift` 可从两个设计 JSON 生成同尺度等高线对比图，明确标作“地形数据预览”；用于不能连接浏览器预览时的几何审阅，不替代网页交互验证。
