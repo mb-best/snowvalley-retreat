@@ -225,4 +225,6 @@
 
 浏览器验证将测试等高线高程从3800 m改为3920 m后立即点击三维，二维阴影确实改变，预览与二维地图的DOM修订号均为928，且预览等待地形完成后才进入绘制步骤。测试完成后撤销。验证环境禁用WebGL上下文，未完成实际三维画面渲染检查；界面明确区分“高度已更新但三维画面暂无法打开”与“地形重算未完成”。测试截图见 `docs/previews/terrain-sync-test.jpg`，该图为测试稿而非用户当前私有草案。
 
-验证命令：`node scripts/check-terrain-preview.mjs`；`node scripts/check-landscape.mjs`；各变更模块语法检查及 `git diff --check`。前端入口版本更新至editor v26，三维模块v7，刷新同一站点时继续读取该浏览器已经保存的草案。
+验证命令：`node scripts/check-terrain-preview.mjs`；`node scripts/check-landscape.mjs`；各变更模块语法检查及 `git diff --check`。前端入口版本更新至editor v27，地形同步模块v2，三维模块v7，刷新同一站点时继续读取该浏览器已经保存的草案。
+
+刷新后也会从等高线与其保留基准的差异中识别已保存的修改，优先定位实际高度变化最大的线段位置；不依赖本次会话的临时选择状态。未改动的默认图保持全图视角。

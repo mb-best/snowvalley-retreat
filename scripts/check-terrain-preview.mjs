@@ -1,5 +1,5 @@
 import fs from'node:fs';import assert from'node:assert/strict';import{terrainModule}from'./terrain-modules.mjs';
-import{createTerrainState}from'../dist/terrain-editor/terrain-state.js';import{terrainPositions,TerrainPreview}from'../dist/terrain-editor/preview.js';
+import{createTerrainState,changedContourFocus}from'../dist/terrain-editor/terrain-state.js';import{terrainPositions,TerrainPreview}from'../dist/terrain-editor/preview.js';
 const m=await terrainModule('model.js'),original=JSON.parse(fs.readFileSync(new URL('../dist/terrain-editor/default-terrain.json',import.meta.url)));let document=structuredClone(original),paints=[],delivered=[];
 const build=d=>m.fieldFor(d.features,401,321,500,d.terrainBase),state=createTerrainState({getDocument:()=>document,build,waitForPaint:()=>new Promise(resolve=>paints.push(resolve)),onReady:(field,doc,ticket)=>delivered.push(ticket)});
 let first=state.rebuild();paints.shift()();let base=await first;assert(base);assert.deepEqual(document,original);
@@ -12,6 +12,7 @@ const beforeVertices=terrainPositions(base),afterVertices=terrainPositions(curre
 contour.elevation+=120;let refresh=state.latest({refresh:true});paints.shift()();let raised=await refresh;assert.deepEqual(raised.values,build(document).values);assert.notDeepEqual(raised.values,current.values);assert.equal(await state.latest(),raised);
 // An older asynchronous build resolving last must not replace a newer one.
 let version={id:1},queue=[],jobs=[],published=[];const asyncState=createTerrainState({getDocument:()=>version,waitForPaint:()=>new Promise(r=>queue.push(r)),build:d=>new Promise(r=>jobs.push(()=>r({id:d.id}))),onReady:f=>published.push(f.id)});let oldJob=asyncState.rebuild();queue.shift()();await Promise.resolve();version={id:2};let newest=asyncState.latest({refresh:true});queue.shift()();await Promise.resolve();jobs.shift()();assert.equal(await oldJob,null);jobs.shift()();assert.equal((await newest).id,2);assert.deepEqual(published,[2]);
+let savedFocus=changedContourFocus(document,raised,m.elevationAt);assert.equal(savedFocus.id,contour.id);assert(contour.points.some(p=>p[0]===savedFocus.focusPoint[0]&&p[1]===savedFocus.focusPoint[1]));assert.equal(changedContourFocus(original,base,m.elevationAt),null,'Unedited maps keep the overview');
 // Camera focus uses the actual edited point, instead of hiding a local change
 // in a 20 km-wide overview. This math needs no WebGL context.
 const fake={field:raised,scale:1,draw(){this.draws=(this.draws||0)+1;}};let focusPoint=contour.points[5];TerrainPreview.prototype.focusFeature.call(fake,{...contour,focusPoint});assert.equal(fake.targetX,focusPoint[0]-10);assert.equal(fake.targetZ,focusPoint[1]-8);assert.equal(fake.radius,3.8);assert.equal(fake.targetHeight,(m.elevationAt(raised,...focusPoint)-1700)/1000);TerrainPreview.prototype.focusFeature.call(fake,null);assert.equal(fake.radius,24);assert.equal(fake.targetX,0);assert.equal(fake.targetZ,0);

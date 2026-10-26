@@ -1,4 +1,4 @@
-import{createTerrainState}from'./terrain-state.js?v=1';
+import{createTerrainState,changedContourFocus}from'./terrain-state.js?v=2';
 import{hasCurve,curvePath,sampleCurve,moveCurveKnot,moveCurveHandle,splitCurve,removeCurveKnot,nearestCurve,autoCurve}from'./curves.js?v=2';
 import{convertTrailCurves,auditTrailCurve}from'./trail-curves.js?v=2';
 import{hikingContext,trailStats}from'./landscape-trails.js?v=2';
@@ -140,14 +140,14 @@ $('downloadPNG').onclick=async()=>{let source=new Blob([exportSVG()],{type:'imag
 $('downloadHeight').onclick=()=>{let f=fieldFor(doc.features,401,321,500,doc.terrainBase),header=new TextEncoder().encode('P5\n# Elevation 0..9000 m; north-west origin; spacing 50 m\n401 321\n65535\n'),bytes=new Uint8Array(header.length+f.values.length*2);bytes.set(header);for(let i=0;i<f.values.length;i++){let v=Math.round(clamp(f.values[i]/9000,0,1)*65535);bytes[header.length+i*2]=v>>8;bytes[header.length+i*2+1]=v&255;}download(new Blob([bytes],{type:'image/x-portable-graymap'}),`雪隐山居-高度图-0至9000m-${stamp()}.pgm`);};
 $('importButton').onclick=()=>$('importFile').click();$('importFile').onchange=async()=>{let file=$('importFile').files[0];if(!file)return;try{if(file.size>20e6)throw Error('文件过大，请选择本编辑器导出的设计 JSON。');let parsed=validateDocument(JSON.parse(await file.text()));remember();doc=parsed;lastTerrainEditId=null;lastTerrainEditPoint=null;selected=null;pointIndex=0;changed();renderVegetation();toast('设计已导入，可继续编辑；也可以撤销返回。');}catch(err){toast(err instanceof SyntaxError?'文件不是有效的 JSON，当前地图已保留。':err.message);}finally{$('importFile').value='';}};
 let previewOpening=0,previewFocus=null;
-function previewFocusFeature(){let f=doc.features.find(f=>f.id===lastTerrainEditId)||selectedFeature();return f&&affectsTerrain(f)?{...f,focusPoint:f.id===lastTerrainEditId?lastTerrainEditPoint:selectedTerrainPoint||f.points[pointIndex]}:null;}
+function previewFocusFeature(current){let f=doc.features.find(f=>f.id===lastTerrainEditId)||selectedFeature();return f&&affectsTerrain(f)?{...f,focusPoint:f.id===lastTerrainEditId?lastTerrainEditPoint:selectedTerrainPoint||f.points[pointIndex]}:changedContourFocus(doc,current,elevationAt);}
 $('previewButton').onclick=async()=>{
  const opening=++previewOpening;let heightReady=false;$('previewDialog').showModal();$('previewButton').disabled=true;$('previewOverview').disabled=true;$('previewFocus').hidden=true;$('previewNote').textContent='正在同步当前等高线与地形…';
  try{
   const current=await terrainState.latest();heightReady=true;$('previewDialog').dataset.terrainRevision=String(doc.revision);$('previewDialog').dataset.terrainGeneration=String(terrainState.revision);
   let{TerrainPreview}=await import('./preview.js?v=7');
   if(opening!==previewOpening||!$('previewDialog').open)return;
-  if(preview)preview.dispose();previewFocus=previewFocusFeature();
+  if(preview)preview.dispose();previewFocus=previewFocusFeature(current);
   preview=new TerrainPreview($('previewScene'),current,doc.features,Number($('verticalScale').value),doc.ecology,previewFocus);
   $('previewFocus').hidden=!previewFocus;$('previewOverview').disabled=false;preview.focusFeature(previewFocus);$('previewNote').textContent=previewFocus?'已同步当前等高线 · 已定位修改区域 · 拖动旋转、滚轮缩放':'已同步当前等高线 · 拖动旋转、滚轮缩放';
  }catch(e){console.error(e);$('previewNote').textContent=heightReady?'地形已按当前等高线更新；当前设备暂时无法打开三维画面。':'地形重算未完成，请关闭预览后重试；当前草案已保留。';}
