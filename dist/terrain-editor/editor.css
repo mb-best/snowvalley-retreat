@@ -6,3 +6,5 @@
 .feature-hit:focus{outline:none}.feature-hit:focus-visible{stroke:#c5a56888;stroke-width:4}
 
 .draft-tag{white-space:nowrap}#mapTitle{font-size:19px;letter-spacing:5px}
+
+.curve-guide{stroke:#b49c76;stroke-width:1;stroke-dasharray:4 3;fill:none;vector-effect:non-scaling-stroke;pointer-events:none}.curve-handle{fill:#e8f0e1;stroke:#637d59;stroke-width:1.5;vector-effect:non-scaling-stroke;cursor:crosshair}

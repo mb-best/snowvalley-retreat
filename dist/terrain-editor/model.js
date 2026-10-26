@@ -1,3 +1,4 @@
+import{hasCurve,sampleCurve}from'./curves.js?v=2';
 // Coordinates are kilometres east/south from the north-west corner. Elevations are metres.
 export const WIDTH=20, HEIGHT=16, SCHEMA='snowvalley-terrain/1';
 export const MAP_TITLE='雪隐山居 · 云岫山境';
@@ -73,7 +74,7 @@ export function defaultFeatures(){return[
 export function inside(p,poly){let yes=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++)if((poly[i][1]>p[1])!==(poly[j][1]>p[1])&&p[0]<(poly[j][0]-poly[i][0])*(p[1]-poly[i][1])/(poly[j][1]-poly[i][1])+poly[i][0])yes=!yes;return yes;}
 export function distanceSegment(p,a,b){let dx=b[0]-a[0],dy=b[1]-a[1],t=clamp(((p[0]-a[0])*dx+(p[1]-a[1])*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy);}
 export function simplify(points,tolerance=.055){if(points.length<=2)return points;let max=0,index=0;for(let i=1;i<points.length-1;i++){let d=distanceSegment(points[i],points[0],points.at(-1));if(d>max){max=d;index=i}}return max>tolerance?[...simplify(points.slice(0,index+1),tolerance).slice(0,-1),...simplify(points.slice(index),tolerance)]:[points[0],points.at(-1)];}
-export function samplePath(f,step=.055){let out=[];for(let i=0;i<f.points.length-(f.closed?0:1);i++){let a=f.points[i],b=f.points[(i+1)%f.points.length],n=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/step));for(let j=0;j<n;j++)out.push([a[0]+(b[0]-a[0])*j/n,a[1]+(b[1]-a[1])*j/n]);}if(!f.closed)out.push(f.points.at(-1));return out;}
+export function samplePath(f,step=.055){if(hasCurve(f))return sampleCurve(f,step);let out=[];for(let i=0;i<f.points.length-(f.closed?0:1);i++){let a=f.points[i],b=f.points[(i+1)%f.points.length],n=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/step));for(let j=0;j<n;j++)out.push([a[0]+(b[0]-a[0])*j/n,a[1]+(b[1]-a[1])*j/n]);}if(!f.closed)out.push(f.points.at(-1));return out;}
 const referenceFields=new Map();
 export function fieldFor(features,nx=201,ny=161,iterations=300,baseField=null){
  let base=new Float32Array(nx*ny);for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){let x=i/(nx-1)*WIDTH,y=j/(ny-1)*HEIGHT;base[j*nx+i]=baseField?elevationAt(baseField,x,y):baseHeight(x,y);}
@@ -113,6 +114,7 @@ export function validateDocument(doc){
  let ids=new Set(),total=0;
  const validPoints=points=>Array.isArray(points)&&points.length>0&&points.length<=1500&&points.every(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)&&p[0]>=0&&p[0]<=20&&p[1]>=0&&p[1]<=16);
  for(let f of doc.features){if(!f||!Object.prototype.hasOwnProperty.call(kinds,f.type)||typeof f.name!=='string'||f.name.length>100||typeof f.id!=='string'||f.id.length>120||ids.has(f.id)||!validPoints(f.points)||((['contour','lake','peak','village'].includes(f.type))&&(!Number.isFinite(f.elevation)||f.elevation<0||f.elevation>9000))||(f.baselinePoints&&(!validPoints(f.baselinePoints)||!Number.isFinite(f.baselineElevation)||f.baselineElevation<0||f.baselineElevation>9000))||(!['peak','village','label'].includes(f.type)&&f.points.length<(f.closed?3:2)))throw Error('设计文件包含不合法的图形或高程，未覆盖当前地图。');ids.add(f.id);total+=f.points.length;}
+ for(let f of doc.features)if(f.curve){if(f.type!=='trail'||f.closed||!hasCurve(f)||!f.curve.segments.every(s=>Array.isArray(s)&&s.length===2&&validPoints(s)))throw Error('步道曲线控制点无效，当前草案已保留。');total+=f.curve.segments.length*2;}
  if(total>80000)throw Error('节点过多，请简化设计后再导入。');
  for(let f of doc.features)if(f.type==='waterfall'&&(f.points.length!==2||!Number.isFinite(f.drop)||f.drop<=0||!Number.isFinite(f.elevation)||f.elevation<f.drop||f.elevation>9000))throw Error('瀑布落差或高程数据无效。');
  for(let f of doc.features)if(f.constraint==='saddle'&&(!Number.isFinite(f.elevation)||f.elevation<0||f.elevation>9000||f.points.length!==1))throw Error('垭口高程数据无效，当前草案已保留。');
