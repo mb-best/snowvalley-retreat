@@ -1,7 +1,7 @@
 import{clone,fieldFor,elevationAt}from'./model.js?v=6';
 import{developHydrology,settleBasins,finalizeWater,storeTerrain,profile}from'./landscape-hydrology.js?v=1';
 import{developEcology}from'./landscape-ecology.js?v=1';
-import{addEstates,developTrails}from'./landscape-trails.js?v=1';
+import{addEstates,developTrails}from'./landscape-trails.js?v=2';
 export function developLandscape(doc){
  if(doc.landscapeVersion>=1)return false;
  let sourceRevision=doc.revision,{field,reports}=developHydrology(doc),basins=settleBasins(doc,field);field=finalizeWater(doc,field);storeTerrain(doc,field);field=fieldFor(doc.features,401,321,500,doc.terrainBase);addEstates(doc,field);let ecology=developEcology(doc,field),trails=developTrails(doc,field);
