@@ -2,14 +2,15 @@ import * as THREE from '../vendor/three.module.js';
 import{elevationAt,colors,samplePath}from'./model.js?v=7';
 const stops=[[1800,'#7f9f7a'],[2800,'#8fa77d'],[3500,'#a3b88a'],[4200,'#b8ba91'],[4800,'#aaa992'],[5300,'#c4c9b9'],[6100,'#eef0e5'],[9000,'#f6f6ee']];
 const tint=h=>{let i=stops.findIndex(p=>p[0]>=h);if(i<=0)return new THREE.Color(stops[0][1]);let a=stops[i-1],b=stops[i];return new THREE.Color(a[1]).lerp(new THREE.Color(b[1]),(h-a[0])/(b[0]-a[0]));};
+export function terrainPositions(field){let positions=[];for(let j=0;j<field.ny;j++)for(let i=0;i<field.nx;i++)positions.push(i/(field.nx-1)*20-10,(field.values[j*field.nx+i]-1700)/1000,j/(field.ny-1)*16-8);return positions;}
 export class TerrainPreview{
- constructor(container,field,features,scale=1,ecology=null){
-  this.container=container;this.field=field;this.scale=scale;this.theta=.55;this.phi=.86;this.radius=24;this.disposables=[];
+ constructor(container,field,features,scale=1,ecology=null,focus=null){
+  this.container=container;this.field=field;this.scale=scale;this.theta=.55;this.phi=.86;this.radius=24;this.targetX=0;this.targetZ=0;this.targetHeight=1.6;this.disposables=[];
   this.renderer=new THREE.WebGLRenderer({antialias:true});this.renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));this.renderer.setClearColor('#dfe7d8');this.renderer.outputColorSpace=THREE.SRGBColorSpace;this.renderer.toneMapping=THREE.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1;container.replaceChildren(this.renderer.domElement);
   this.scene=new THREE.Scene();this.scene.fog=new THREE.Fog('#dfe7d8',40,85);this.scene.add(new THREE.HemisphereLight('#f8f9ee','#9fa88b',2.2));let sun=new THREE.DirectionalLight('#fff7da',2.3);sun.position.set(-15,25,18);this.scene.add(sun);
   this.camera=new THREE.PerspectiveCamera(42,1,.1,150);this.terrain=new THREE.Group();this.scene.add(this.terrain);
-  let positions=[],vertexColors=[],indices=[],{nx,ny,values}=field;
-  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){let h=values[j*nx+i];positions.push(i/(nx-1)*20-10,(h-1700)/1000,j/(ny-1)*16-8);let c=tint(h);if(ecology?.grid){let eg=ecology.grid,k=Math.min(159,Math.floor(j/(ny-1)*160))*200+Math.min(199,Math.floor(i/(nx-1)*200)),tree=eg.tree[k]/100,grass=eg.grass[k]/100;c.lerp(new THREE.Color('#668767'),tree*.45).lerp(new THREE.Color('#a5b87d'),grass*.13);}vertexColors.push(c.r,c.g,c.b);}
+  let positions=terrainPositions(field),vertexColors=[],indices=[],{nx,ny,values}=field;
+  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){let h=values[j*nx+i];let c=tint(h);if(ecology?.grid){let eg=ecology.grid,k=Math.min(159,Math.floor(j/(ny-1)*160))*200+Math.min(199,Math.floor(i/(nx-1)*200)),tree=eg.tree[k]/100,grass=eg.grass[k]/100;c.lerp(new THREE.Color('#668767'),tree*.45).lerp(new THREE.Color('#a5b87d'),grass*.13);}vertexColors.push(c.r,c.g,c.b);}
   for(let j=0;j<ny-1;j++)for(let i=0;i<nx-1;i++){let k=j*nx+i;indices.push(k,k+nx,k+1,k+1,k+nx,k+nx+1);}
   let geom=new THREE.BufferGeometry();geom.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geom.setAttribute('color',new THREE.Float32BufferAttribute(vertexColors,3));geom.setIndex(indices);geom.computeVertexNormals();this.addMesh(geom,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
   // Exposed cut sides make the footprint and the vertical scale legible.
@@ -20,14 +21,19 @@ export class TerrainPreview{
    else if(f.type==='lake'){let shape=new THREE.Shape(f.points.map(p=>new THREE.Vector2(p[0]-10,-(p[1]-8))));let g=new THREE.ShapeGeometry(shape);g.rotateX(-Math.PI/2);g.translate(0,(f.elevation-1700)/1000+.018,0);this.addMesh(g,new THREE.MeshStandardMaterial({color:'#78b1bd',roughness:.35,metalness:.08,side:THREE.DoubleSide}));}
    else if(['river','trail','forest','grassland','meadow','ridge'].includes(f.type)){let ps=samplePath(f,f.type==='trail'?.008:.05).map(([x,y])=>new THREE.Vector3(x-10,(elevationAt(field,x,y)-1700)/1000+.024,y-8));if(ps.length>1){let g=new THREE.BufferGeometry().setFromPoints(ps),m=new THREE.LineBasicMaterial({color:colors[f.type],transparent:true,opacity:f.type==='river'?.95:.5});this.terrain.add(new THREE.Line(g,m));this.disposables.push(g,m);}}
   }
+  if(focus?.type==='contour'){
+   let points=samplePath(focus,.008).map(([x,y])=>new THREE.Vector3(x-10,(elevationAt(field,x,y)-1700)/1000+.008,y-8));
+   if(points.length>1){let geometry=new THREE.BufferGeometry().setFromPoints(points),material=new THREE.LineBasicMaterial({color:'#f2b84f',depthTest:false,transparent:true,opacity:.95}),line=new THREE.Line(geometry,material);line.renderOrder=10;this.terrain.add(line);this.disposables.push(geometry,material);}
+  }
   let floor=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:'#dbe3d0',roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.y=-.18;this.scene.add(floor);this.disposables.push(floor.geometry,floor.material);
   let grid=new THREE.GridHelper(20,10,'#a0b28d','#c4d0b7');grid.position.y=-.16;this.scene.add(grid);this.disposables.push(grid.geometry,grid.material);
-  this.onDown=e=>{this.pointer=[e.clientX,e.clientY];this.renderer.domElement.setPointerCapture(e.pointerId);};this.onMove=e=>{if(!this.pointer)return;this.theta-=(e.clientX-this.pointer[0])*.007;this.phi=Math.max(.18,Math.min(1.5,this.phi+(e.clientY-this.pointer[1])*.006));this.pointer=[e.clientX,e.clientY];this.draw();};this.onUp=()=>this.pointer=null;this.onWheel=e=>{e.preventDefault();this.radius=Math.max(10,Math.min(50,this.radius*(e.deltaY>0?1.08:.92)));this.draw();};
+  this.onDown=e=>{this.pointer=[e.clientX,e.clientY];this.renderer.domElement.setPointerCapture(e.pointerId);};this.onMove=e=>{if(!this.pointer)return;this.theta-=(e.clientX-this.pointer[0])*.007;this.phi=Math.max(.18,Math.min(1.5,this.phi+(e.clientY-this.pointer[1])*.006));this.pointer=[e.clientX,e.clientY];this.draw();};this.onUp=()=>this.pointer=null;this.onWheel=e=>{e.preventDefault();this.radius=Math.max(1.4,Math.min(50,this.radius*(e.deltaY>0?1.08:.92)));this.draw();};
   for(let[event,fn]of[['pointerdown',this.onDown],['pointermove',this.onMove],['pointerup',this.onUp],['pointercancel',this.onUp],['wheel',this.onWheel]])this.renderer.domElement.addEventListener(event,fn,{passive:event!=='wheel'});
   this.resize=new ResizeObserver(()=>{let w=container.clientWidth,h=container.clientHeight;this.renderer.setSize(w,h);this.camera.aspect=w/h;this.camera.updateProjectionMatrix();this.draw();});this.resize.observe(container);this.setScale(scale);
  }
  addMesh(g,m){this.terrain.add(new THREE.Mesh(g,m));this.disposables.push(g,m);}
  setScale(s){this.scale=s;this.terrain.scale.y=s;this.draw();}
- draw(){let target=new THREE.Vector3(0,1.6*this.scale,0);this.camera.position.set(Math.sin(this.theta)*Math.sin(this.phi)*this.radius,target.y+Math.cos(this.phi)*this.radius,Math.cos(this.theta)*Math.sin(this.phi)*this.radius);this.camera.lookAt(target);this.renderer.render(this.scene,this.camera);}
+ focusFeature(f){if(!f){this.targetX=0;this.targetZ=0;this.targetHeight=1.6;this.radius=24;}else{let xs=f.points.map(p=>p[0]),ys=f.points.map(p=>p[1]),x=f.focusPoint?.[0]??(Math.min(...xs)+Math.max(...xs))/2,y=f.focusPoint?.[1]??(Math.min(...ys)+Math.max(...ys))/2;this.targetX=x-10;this.targetZ=y-8;this.targetHeight=(elevationAt(this.field,x,y)-1700)/1000;this.radius=f.focusPoint?3.8:Math.max(3,Math.min(22,Math.max(Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys))*1.8));}this.draw();}
+ draw(){let target=new THREE.Vector3(this.targetX,this.targetHeight*this.scale,this.targetZ);this.camera.position.set(target.x+Math.sin(this.theta)*Math.sin(this.phi)*this.radius,target.y+Math.cos(this.phi)*this.radius,target.z+Math.cos(this.theta)*Math.sin(this.phi)*this.radius);this.camera.lookAt(target);this.renderer.render(this.scene,this.camera);}
  dispose(){this.resize.disconnect();for(let d of this.disposables)d.dispose();this.renderer.dispose();this.renderer.domElement.remove();}
 }
