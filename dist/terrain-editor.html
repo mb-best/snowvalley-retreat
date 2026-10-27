@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f4f3ec"><meta name="description" content="按手绘草图构建的 20 × 16 公里山谷地形工作台。编辑等高线、森林、草原、湖岸和村落，导出可用于重建世界的地形蓝图。">
-<title>云岫山境 · 雪隐山居地形工作台</title><link rel="icon" href="./icon.svg"><link rel="stylesheet" href="./terrain-editor/editor.css?v=4">
+<title>云岫山境 · 雪隐山居地形工作台</title><link rel="icon" href="./icon.svg"><link rel="stylesheet" href="./terrain-editor/editor.css?v=5">
 </head>
 <body>
 <header class="app-header">
  <a class="identity" href="./terrain-editor.html"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m3 30 11-20 7 12 5-8 12 16M10 17l4 3 3-3M22 20l4 4 4-3M4 35h33"/></svg><span>山谷地形工作台<small>SNOWVALLEY / LANDSCAPE ATELIER</small></span></a>
  <div class="document-info"><span class="draft-tag" id="draftName">云岫山境 · 草案 01</span><span id="saveState" role="status">正在铺开地图…</span></div>
- <div class="header-actions"><a id="publishedSummitsLink" class="quiet-button" href="./terrain-summits.html?v=summits-2" hidden>打开两峰修补版</a><a id="originalDraftLink" class="quiet-button" href="./terrain-editor.html?v=summits-2" hidden>返回原草案</a><button id="helpButton" class="quiet-button">使用说明</button><a class="quiet-button back-link" href="./sunny-valley.html?view=cottage">返回山谷 ↗</a><button id="exportButton" class="primary">导出设计 <span>↓</span></button></div>
+ <div class="header-actions"><a id="publishedSummitsLink" class="quiet-button" href="./terrain-editor.html?v=current-summits-1&amp;repair=current-summits" hidden>在原稿上修补两峰</a><a id="originalDraftLink" class="quiet-button" href="./terrain-editor.html?v=current-summits-1&amp;repair=current-summits" hidden>返回原步道地图并修补两峰</a><button id="helpButton" class="quiet-button">使用说明</button><a class="quiet-button back-link" href="./sunny-valley.html?view=cottage">返回山谷 ↗</a><button id="exportButton" class="primary">导出设计 <span>↓</span></button></div>
 </header>
 <div class="workbench">
  <aside class="sidebar">
@@ -25,6 +25,7 @@
  </aside>
  <main class="map-column">
   <div class="map-toolbar"><div class="tool-group" role="group" aria-label="地图工具"><button data-tool="select" class="active" aria-pressed="true" title="选择与拖动 (V)"><svg viewBox="0 0 24 24"><path d="m5 3 14 10-7 1-3 7Z"/></svg><span>选择</span></button><button data-tool="pan" aria-pressed="false" title="平移地图 (H)"><svg viewBox="0 0 24 24"><path d="M9 11V5a2 2 0 0 1 4 0v5-6a2 2 0 0 1 4 0v7-4a2 2 0 0 1 4 0v8c0 5-3 7-8 7-3 0-5-2-7-5l-3-4a2 2 0 0 1 3-3l3 3Z"/></svg><span>平移</span></button><button id="drawButton" title="绘制新的线条或范围"><svg viewBox="0 0 24 24"><path d="m4 20 4-1L21 6l-3-3L5 16Z M15 6l3 3"/></svg><span>绘制</span></button></div><div class="tool-divider"></div><button id="undoButton" class="icon-button" aria-label="撤销" title="撤销 (⌘/Ctrl Z)">↶</button><button id="redoButton" class="icon-button" aria-label="重做" title="重做 (⌘/Ctrl Shift Z)">↷</button><span class="toolbar-spacer"></span><label class="view-select"><span>底图</span><select id="styleSelect" aria-label="底图风格"><option value="atlas">自然地形</option><option value="exposure">年日照潜力</option><option value="height">高程设色</option><option value="paper">线稿模式</option></select></label><button id="curveModeButton" class="quiet-button" hidden>恢复曲线编辑</button><button id="auditButton" class="quiet-button">地形检查</button><button id="previewButton" class="quiet-button"><span class="cube-icon">◇</span> 三维地形</button></div>
+  <p id="currentRepairStatus" class="current-repair-status" role="status" hidden></p>
   <div class="map-stage" id="mapStage">
    <svg id="mapSvg" viewBox="-90 -90 2180 1780" role="img" aria-label="可编辑的20乘16公里山谷地形地图" tabindex="0"><defs>
     <clipPath id="mapClip"><rect width="2000" height="1600"/></clipPath>
@@ -53,5 +54,5 @@
 <dialog id="previewDialog" class="preview-dialog"><div class="preview-header"><span><b>地形体块预览</b><small>20 × 16 km · 高度比例 1:1</small></span><button id="previewFocus" class="quiet-button" hidden>查看修改处</button><button id="previewOverview" class="quiet-button">全图</button><label>高度夸张<select id="verticalScale"><option value="1">1 ×</option><option value="1.5">1.5 ×</option><option value="2">2 ×</option></select></label><button data-close="previewDialog" class="quiet-button">返回编辑 ×</button></div><div id="previewScene"></div><p class="preview-note" id="previewNote">拖动旋转 · 滚轮缩放 · 这里只检查地形体块</p></dialog>
 <dialog id="auditDialog" class="audit-dialog"><button class="dialog-close" data-close="auditDialog" aria-label="关闭地形检查">×</button><p class="eyebrow">曲面与等高线</p><h2>地形检查</h2><p id="auditSummary"></p><p id="auditMethod"></p><div id="auditRows"></div><div class="audit-actions"><button id="downloadAudit" class="primary" disabled>导出检查报告</button><button id="repairSummitsButton" class="quiet-button" hidden>仅修补青岚峰与岚渡峰</button><button class="quiet-button" data-close="auditDialog">返回地图</button></div></dialog>
 <div id="toast" role="status" aria-live="polite"></div>
-<script type="module" src="./terrain-editor/editor.js?v=29"></script>
+<script type="module" src="./terrain-editor/editor.js?v=30"></script>
 </body></html>
