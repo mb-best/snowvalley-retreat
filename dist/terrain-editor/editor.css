@@ -8,3 +8,5 @@
 .draft-tag{white-space:nowrap}#mapTitle{font-size:19px;letter-spacing:5px}
 
 .curve-guide{stroke:#b49c76;stroke-width:1;stroke-dasharray:4 3;fill:none;vector-effect:non-scaling-stroke;pointer-events:none}.curve-handle{fill:#e8f0e1;stroke:#637d59;stroke-width:1.5;vector-effect:non-scaling-stroke;cursor:crosshair}
+
+.audit-dialog{width:760px}.audit-row{border-top:1px solid var(--line);padding:17px 0 12px}.audit-row b{font-size:13px;font-weight:500}.audit-row p{font-size:11px;line-height:1.7;color:#7c8974;margin:8px 0}.audit-row .quiet-button{padding:5px 0;color:#566f4c;text-decoration:underline;text-underline-offset:4px}.audit-actions{position:sticky;bottom:-36px;background:#fcfcf5;display:flex;align-items:center;gap:14px;padding:16px 0 6px;border-top:1px solid var(--line)}

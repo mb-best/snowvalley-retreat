@@ -1,0 +1,4 @@
+import fs from'node:fs';import{terrainModule}from'./terrain-modules.mjs';
+const p=await terrainModule('peak-repair.js'),a=await terrainModule('terrain-audit.js'),m=await terrainModule('model.js'),source=new URL('../dist/terrain-editor/default-terrain.json',import.meta.url),backup=new URL('../dist/terrain-editor/before-summit-repair.json',import.meta.url),document=JSON.parse(fs.readFileSync(source));
+if(!fs.existsSync(backup))fs.copyFileSync(source,backup);const result=p.repairTwinSummits(document);if(result){m.validateDocument(result.document);fs.writeFileSync(source,JSON.stringify(result.document));console.log(result.summary);}else console.log('Two summit repair already present; no terrain changes');
+const current=result?.document||document,field=result?.field||m.fieldFor(current.features,401,321,500,current.terrainBase);fs.writeFileSync(new URL('../dist/terrain-editor/summit-audit.json',import.meta.url),JSON.stringify(a.auditTerrain(current,field)));
