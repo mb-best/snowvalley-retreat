@@ -9,7 +9,7 @@
 <header class="app-header">
  <a class="identity" href="./terrain-editor.html"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m3 30 11-20 7 12 5-8 12 16M10 17l4 3 3-3M22 20l4 4 4-3M4 35h33"/></svg><span>山谷地形工作台<small>SNOWVALLEY / LANDSCAPE ATELIER</small></span></a>
  <div class="document-info"><span class="draft-tag" id="draftName">云岫山境 · 草案 01</span><span id="saveState" role="status">正在铺开地图…</span></div>
- <div class="header-actions"><button id="helpButton" class="quiet-button">使用说明</button><a class="quiet-button back-link" href="./sunny-valley.html?view=cottage">返回山谷 ↗</a><button id="exportButton" class="primary">导出设计 <span>↓</span></button></div>
+ <div class="header-actions"><a id="publishedSummitsLink" class="quiet-button" href="./terrain-summits.html?v=summits-2" hidden>打开两峰修补版</a><a id="originalDraftLink" class="quiet-button" href="./terrain-editor.html?v=summits-2" hidden>返回原草案</a><button id="helpButton" class="quiet-button">使用说明</button><a class="quiet-button back-link" href="./sunny-valley.html?view=cottage">返回山谷 ↗</a><button id="exportButton" class="primary">导出设计 <span>↓</span></button></div>
 </header>
 <div class="workbench">
  <aside class="sidebar">
@@ -53,5 +53,5 @@
 <dialog id="previewDialog" class="preview-dialog"><div class="preview-header"><span><b>地形体块预览</b><small>20 × 16 km · 高度比例 1:1</small></span><button id="previewFocus" class="quiet-button" hidden>查看修改处</button><button id="previewOverview" class="quiet-button">全图</button><label>高度夸张<select id="verticalScale"><option value="1">1 ×</option><option value="1.5">1.5 ×</option><option value="2">2 ×</option></select></label><button data-close="previewDialog" class="quiet-button">返回编辑 ×</button></div><div id="previewScene"></div><p class="preview-note" id="previewNote">拖动旋转 · 滚轮缩放 · 这里只检查地形体块</p></dialog>
 <dialog id="auditDialog" class="audit-dialog"><button class="dialog-close" data-close="auditDialog" aria-label="关闭地形检查">×</button><p class="eyebrow">曲面与等高线</p><h2>地形检查</h2><p id="auditSummary"></p><p id="auditMethod"></p><div id="auditRows"></div><div class="audit-actions"><button id="downloadAudit" class="primary" disabled>导出检查报告</button><button id="repairSummitsButton" class="quiet-button" hidden>仅修补青岚峰与岚渡峰</button><button class="quiet-button" data-close="auditDialog">返回地图</button></div></dialog>
 <div id="toast" role="status" aria-live="polite"></div>
-<script type="module" src="./terrain-editor/editor.js?v=28"></script>
+<script type="module" src="./terrain-editor/editor.js?v=29"></script>
 </body></html>
