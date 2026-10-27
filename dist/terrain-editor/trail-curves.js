@@ -1,4 +1,4 @@
-import{distanceSegment}from'./model.js?v=7';
+import{distanceSegment}from'./model.js?v=8';
 import{distance,mix}from'./landscape-hydrology.js?v=1';
 import{terrainGradient,hikingContext,trailSegmentAudit,trailStats,HIKING_RULES}from'./landscape-trails.js?v=2';
 import{cubicAt,cubicTangent,curveSegment,sampleCurve,hasCurve,curveAuditParameters}from'./curves.js?v=2';

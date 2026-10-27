@@ -1,0 +1,8 @@
+import assert from'node:assert/strict';import{terrainModule}from'./terrain-modules.mjs';
+const r=await terrainModule('region-curves.js'),m=await terrainModule('model.js');
+const square={id:'lake',name:'湖泊',type:'lake',closed:true,elevation:3000,points:[[1,1],[2,1],[2,2],[1,2]],holes:[[[1.3,1.3],[1.6,1.3],[1.6,1.6],[1.3,1.6]]]};
+const d={features:[structuredClone(square),{type:'river',points:[[0,0],[1,1]]}],revision:7};const saved=structuredClone(d.features[0]);assert.deepEqual(r.smoothRegionBoundaries(d),{regions:1,holes:1});assert.deepEqual(d.features[0].points,saved.points);assert.deepEqual(d.features[0].holes,saved.holes);const f=d.features[0],rings=r.regionRings(f,.002);assert.equal(rings.length,2);assert(rings[0].some(p=>Math.hypot(p[0]-1,p[1]-1)<1e-12),'Retain river mouth');assert(r.regionPath(f).includes(' Q'));assert.equal((r.regionPath(f).match(/ Z/g)||[]).length,2);assert.deepEqual(r.smoothRegionBoundaries(d),{regions:0,holes:0});
+for(const p of rings[0])assert(p[0]>=1&&p[0]<=2&&p[1]>=1&&p[1]<=2,'No overshoot');for(const p of rings[1])assert(m.inside(p,rings[0]),'Hole stays inside its exterior');
+const originalRing=rings[0];f.points[1]=[2.2,1];assert.notDeepEqual(r.regionRings(f)[0],originalRing,'Node edits invalidate cached curve');assert.deepEqual(saved.points,square.points);
+const sample=m.samplePath(f,.005);assert(sample.length>f.points.length);assert.deepEqual(sample,r.regionRings(f,.005,true)[0],'The terrain/export sampler uses the same curves');
+console.log('Region curves: closed exterior/holes, no overshoot, river-mouth pin, source vertices retained, edit cache invalidation, shared geometry sampler passed.');

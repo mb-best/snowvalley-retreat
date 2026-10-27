@@ -1,4 +1,4 @@
-import{WIDTH,HEIGHT,elevationAt}from'./model.js?v=7';
+import{WIDTH,HEIGHT,elevationAt}from'./model.js?v=8';
 // Match the same triangle diagonal as TerrainPreview's actual indexed mesh.
 export function meshElevationAt(field,x,y){const fx=Math.max(0,Math.min(field.nx-1,x/WIDTH*(field.nx-1))),fy=Math.max(0,Math.min(field.ny-1,y/HEIGHT*(field.ny-1))),i=Math.min(field.nx-2,Math.floor(fx)),j=Math.min(field.ny-2,Math.floor(fy)),u=fx-i,v=fy-j,k=j*field.nx+i,a=field.values;return u+v<=1?a[k]*(1-u-v)+a[k+1]*u+a[k+field.nx]*v:a[k+field.nx+1]*(u+v-1)+a[k+1]*(1-v)+a[k+field.nx]*(1-u);}
 const lerp=(a,b,t)=>a.map((v,i)=>v+(b[i]-v)*t);

@@ -47,3 +47,15 @@
 本入口跳过其他地形迁移和重命名，只允许步道曲线版本作为底稿。原稿不存在时才加载发布的修补前步道曲线底稿，并在地图上明确提示；原稿损坏或 IndexedDB 记录缺失时停止，避免用发布底稿覆盖私有修改。修补成功前用独立时间戳键保存完整原稿，备份写入失败则不应用修补。导出“双峰修补前”优先读取本次备份，旧备份仍保留。
 
 验证：本地和 IndexedDB 读取优先、无原稿和损坏原稿分支、备份失败不应用、幂等性检查通过；双峰几何回归通过，外围网格变化0m，步道及其他要素保留。浏览器通过UI导入带自定义名称的修补前草案，再打开本入口，保留自定义名称并完成修补；导出的修补前备份与导入原稿内容一致（导入自身更新修订号和时间），修补后所有非等高线要素完全一致。截图为预览验证，不是读取用户私有浏览器草案的证明。
+
+## Rounded region boundaries and protected summit patches
+
+Summit repairs can shift and shrink their disks while staying within 650 m of each named peak, preserving nearby passes and water features. The radial shoulder fit uses the actual peak and disk-ray intersection, with a narrow outer transition to avoid retaining ghost summits after manual moves. Unsafe patches are still refused atomically.
+
+The region staircase came from 100 m ecology-mask polygons and straight SVG edges. Closed quadratic rounding retains every source vertex and hole, limits each trim to 60 m and half its adjacent edges, and pins lake vertices next to river/waterfall connection segments. Editing a vertex reshapes the curve; inserted/deleted vertices maintain connection indices, and translating a region translates its holes.
+
+SVG paths, selection hit paths, vegetation inclusion, 3D water meshes, 3D region lines and world exports share one sampler. JSON retains editable source vertices plus the boundary style. World export includes sampledPoints and sampledHoles in metres. Rounding an unchanged baked lake does not alter the height grid.
+
+The explicit smoothing action backs up the active document before applying changes and supports undo. Contours, ridges, rivers and existing trail curves are not refitted by region smoothing.
+
+Checks passed for exterior/hole closure, bounded rounding, river mouth preservation, edit cache invalidation and shared geometry. The original summit and terrain-sync regression suites passed. The current local edited document advanced 1472 to 1474: 125 regions, 59 holes, maximum boundary drift 15 m, unchanged non-contour feature geometry/names/elevations, no height change outside the repair disks, no secondary summit within 650 m except the four-cell peak plateau. Browser control is unavailable in this environment; rendered UI has not been directly inspected.
