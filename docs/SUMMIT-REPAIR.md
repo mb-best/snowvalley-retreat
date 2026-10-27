@@ -59,3 +59,7 @@ SVG paths, selection hit paths, vegetation inclusion, 3D water meshes, 3D region
 The explicit smoothing action backs up the active document before applying changes and supports undo. Contours, ridges, rivers and existing trail curves are not refitted by region smoothing.
 
 Checks passed for exterior/hole closure, bounded rounding, river mouth preservation, edit cache invalidation and shared geometry. The original summit and terrain-sync regression suites passed. The current local edited document advanced 1472 to 1474: 125 regions, 59 holes, maximum boundary drift 15 m, unchanged non-contour feature geometry/names/elevations, no height change outside the repair disks, no secondary summit within 650 m except the four-cell peak plateau. Browser control is unavailable in this environment; rendered UI has not been directly inspected.
+
+## Published map 1474
+
+`terrain-map-1474.html` loads the edited map revision 1474 with both repairs and all rounded boundaries. It uses a separate localStorage key, active IndexedDB record, and backup prefix from both the original editor and the older published-summits copy. It includes the actual revision1472 pre-repair and revision1473 pre-rounding backups. A missing or mismatched published snapshot is an error, never a fallback to another map.
