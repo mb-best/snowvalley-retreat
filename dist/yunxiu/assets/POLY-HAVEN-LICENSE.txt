@@ -1,0 +1,7 @@
+Mossy Rock by Rob Tuytel, Poly Haven.
+CC0 1.0 Universal (public domain dedication).
+Asset: https://polyhaven.com/a/mossy_rock
+Asset license: https://polyhaven.com/license
+CC0 legal code: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Downloaded 2026-10-28, 1K JPEG diffuse, OpenGL normal, roughness.
+Powered by Poly Haven (asset API used for download metadata).

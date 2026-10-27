@@ -1,0 +1,13 @@
+{
+  "title": "雪隐山居 · 云岫山境",
+  "revision": 1597,
+  "sha256": "cf6959526d1ce86c1acaed4ac1743f38ba697a26260ce82396389c90b4c5f757",
+  "libraryFile": "libfile_f13995d63e0c8191938da3e525309d50",
+  "frozen": true,
+  "dimensionsMetres": [
+    20000,
+    16000
+  ],
+  "terrainVertices": 128721,
+  "geometryFeatures": 331
+}
