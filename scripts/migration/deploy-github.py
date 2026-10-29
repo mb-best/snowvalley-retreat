@@ -27,6 +27,7 @@ def main():
   sha=refs.split()[0]
   if subprocess.run(['git','cat-file','-e',sha+'^{commit}'],cwd=ROOT,capture_output=True).returncode or subprocess.run(['git','merge-base','--is-ancestor',sha,head],cwd=ROOT,capture_output=True).returncode:raise SystemExit('Existing GitHub main has unrelated/newer history. Preserved it; choose an empty repository or reconcile history first.')
  run(['git','push',remote,'HEAD:refs/heads/main'],env=env)
+ if capture(['git','tag','--list']):run(['git','push',remote,'--tags'],env=env)
  # Exact history is now backed up even if the account cannot enable private Pages.
  result=subprocess.run([gh,'api','repos/'+a.repository+'/pages'],cwd=ROOT,text=True,capture_output=True)
  if result.returncode:
@@ -42,7 +43,8 @@ def main():
   match=next((r for r in runs if r['headSha']==head and r['status']=='completed' and r['conclusion']=='success'),None)
   if match:
    pages=json.loads(capture([gh,'api','repos/'+a.repository+'/pages']));print(json.dumps({'repository':'https://github.com/'+a.repository,'commit':head,'pages':pages['html_url'],'workflow':match['url']},ensure_ascii=False));return
-  if runs and all(r['status']=='completed' and r['conclusion'] not in ('success','cancelled') for r in runs if r['headSha']==head):raise SystemExit('Pages workflow failed. Source/history remain preserved. See https://github.com/'+a.repository+'/actions')
+  current=[r for r in runs if r['headSha']==head]
+  if current and all(r['status']=='completed' and r['conclusion'] not in ('success','cancelled') for r in current):raise SystemExit('Pages workflow failed. Source/history remain preserved. See https://github.com/'+a.repository+'/actions')
   time.sleep(5)
  raise SystemExit('Source uploaded. Publication is still pending; check GitHub Actions before calling the website live.')
 if __name__=='__main__':main()
