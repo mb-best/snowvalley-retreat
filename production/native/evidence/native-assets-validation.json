@@ -1,0 +1,49 @@
+{
+  "schema": "yunxiu-native-assets-check/1",
+  "checks": "GLB headers, buffer bounds, accessor sizes/finiteness/normal lengths, position min/max, triangle indices, embedded input byte identity",
+  "models": [
+    {
+      "file": "boulder-01-source.glb",
+      "bytes": 13535348,
+      "sha256": "272032bd07c7a98a47b8bbf7db9581e04b62951887514b25b776bc07635e293d",
+      "meshes": 1,
+      "triangles": 66122,
+      "embeddedImages": 3
+    },
+    {
+      "file": "yunxiu-rock-moss-v02.glb",
+      "bytes": 16426736,
+      "sha256": "c4abf20e9db3a6b64cc1c9b0cdf9c7a2b9a116ce55ddc022bddce538561f3bdf",
+      "meshes": 2,
+      "triangles": 85325,
+      "embeddedImages": 4
+    },
+    {
+      "file": "yunxiu-geography-context-v01.glb",
+      "bytes": 2254324,
+      "sha256": "2f38c6680d8345ca395c5c292f57722ae4f01f13fe3d90f9b9269bd1f45b4255",
+      "meshes": 1,
+      "triangles": 80000,
+      "embeddedImages": 0
+    },
+    {
+      "file": "yunxiu-geography-world-base-v01.glb",
+      "bytes": 7192528,
+      "sha256": "ca8df9bde2d8990b5c0738e1ba6314b6442c9b11a963b20d1cebd29f79f733f7",
+      "meshes": 1,
+      "triangles": 256000,
+      "embeddedImages": 0
+    },
+    {
+      "file": "yunxiu-geography-detail-v01.glb",
+      "bytes": 2254376,
+      "sha256": "0093616cb663e7d80e07cdb80beb74fafdbc0702e3bf61899a23d4d594b91f8a",
+      "meshes": 1,
+      "triangles": 80000,
+      "embeddedImages": 0
+    }
+  ],
+  "khronosValidator": "not run; npm registry returned HTTP403",
+  "engineCollisionAndLOD": "not implemented or accepted",
+  "nativeRender": "CPU offline material sample only"
+}

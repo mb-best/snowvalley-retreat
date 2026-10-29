@@ -1,0 +1,49 @@
+{
+  "asset": "Boulder 01",
+  "author": "Rico Cilliers",
+  "source": "https://polyhaven.com/a/boulder_01",
+  "license": "CC0-1.0",
+  "licensePage": "https://polyhaven.com/license",
+  "metadataCredit": "Powered by Poly Haven",
+  "files": [
+    {
+      "path": "boulder_01_2k.gltf",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/2k/boulder_01/boulder_01_2k.gltf",
+      "size": 2773,
+      "md5": "3ef4b3c88c898e12b096eeb40f1edbb9",
+      "sha256": "52d118b56748a18509e4ec0075d07b254d72a0401793f22363c0bb3a682e7361"
+    },
+    {
+      "path": "textures/boulder_01_nor_gl_2k.jpg",
+      "size": 4649207,
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/boulder_01/boulder_01_nor_gl_2k.jpg",
+      "md5": "73ee1783fca7605fd454f0af3e5b85fa",
+      "sha256": "5174b318712ac7725cbcb55d422607f9c66d7f8d035c5412ab897b5939e2db6b"
+    },
+    {
+      "path": "textures/boulder_01_diff_2k.jpg",
+      "size": 3672483,
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/boulder_01/boulder_01_diff_2k.jpg",
+      "md5": "63571077317c9a2d1db95894e0268a07",
+      "sha256": "90bbaa17c1fe0254d2b0b6e5148264fa834953a72724d566f14af029eebe3ca3"
+    },
+    {
+      "path": "boulder_01.bin",
+      "size": 2938808,
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/boulder_01/boulder_01.bin",
+      "md5": "27a19fa031d8b4c3a09261f19c444dc5",
+      "sha256": "7f5b06503d62bd95bfe9c6b8a354a5cc8ff04a4d271a8cf87a3e3125db4232d7"
+    },
+    {
+      "path": "textures/boulder_01_arm_2k.jpg",
+      "size": 2273068,
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/boulder_01/boulder_01_arm_2k.jpg",
+      "md5": "94c796dfd73f72b11e557cb2c05ff51e",
+      "sha256": "ab52859dde519b4822111aa60916b6d21f8a6966c67b6cec44d1cd0775b8a86a"
+    }
+  ],
+  "checkedDate": "2026-10-29",
+  "format": "glTF, 2K maps",
+  "trianglesInDownloadedMesh": 66122,
+  "status": "downloaded and CPU-rendered material sample; not accepted final engine art"
+}

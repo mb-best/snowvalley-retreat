@@ -1,0 +1,35 @@
+{
+  "schema": "yunxiu-geography-glb-check/1",
+  "sourceRevision": 1597,
+  "diagonal": "original B-C; upward winding verified",
+  "engineExecution": "not performed; portable editable meshes only",
+  "models": [
+    {
+      "file": "yunxiu-geography-world-base-v01.glb",
+      "bytes": 7192528,
+      "sha256": "ca8df9bde2d8990b5c0738e1ba6314b6442c9b11a963b20d1cebd29f79f733f7",
+      "vertices": 128721,
+      "triangles": 256000,
+      "maxHeightEncodingErrorMetres": 0,
+      "surface": "exact original base; hydrology not applied"
+    },
+    {
+      "file": "yunxiu-geography-context-v01.glb",
+      "bytes": 2254324,
+      "sha256": "2f38c6680d8345ca395c5c292f57722ae4f01f13fe3d90f9b9269bd1f45b4255",
+      "vertices": 40401,
+      "triangles": 80000,
+      "maxHeightEncodingErrorMetres": 0,
+      "surface": "life-2 ground including hydrology; no new artistic displacement, no player roads"
+    },
+    {
+      "file": "yunxiu-geography-detail-v01.glb",
+      "bytes": 2254376,
+      "sha256": "0093616cb663e7d80e07cdb80beb74fafdbc0702e3bf61899a23d4d594b91f8a",
+      "vertices": 40401,
+      "triangles": 80000,
+      "maxHeightEncodingErrorMetres": 0,
+      "surface": "life-2 ground including hydrology; no new artistic displacement, no player roads"
+    }
+  ]
+}

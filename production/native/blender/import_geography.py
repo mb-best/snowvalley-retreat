@@ -40,6 +40,7 @@ def geometry(columns, rows, spacing, origin, heights, altitude_base=1700):
 
 def main():
     import bpy
+    from mathutils import Vector
     args = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--bundle', type=Path, required=True)
@@ -85,6 +86,24 @@ def main():
         mesh('Study_' + grid['id'], grid['columns'], grid['rows'], grid['spacing'],
              grid['originEastSouth'], grid['file'], grid['id'] == 'detail')
     scene = bpy.context.scene
+    # A useful opening view; only this fresh scene's factory objects are hidden.
+    for obj in list(scene.objects):
+        if obj.name in {'Cube', 'Camera', 'Light'} and obj.name not in collection.objects:
+            obj.hide_render = True
+            obj.hide_set(True)
+    grid = study['grids'][0]
+    heights = read_floats(options.bundle / grid['file'])
+    centre = Vector((grid['centre'][0], -grid['centre'][1], sum(heights)/len(heights)-1700))
+    camera_data = bpy.data.cameras.new('Yunxiu_Terrain_Reference_Camera')
+    camera = bpy.data.objects.new(camera_data.name, camera_data)
+    collection.objects.link(camera)
+    camera.location = centre + Vector((750, -950, 850))
+    camera.rotation_euler = (centre-camera.location).to_track_quat('-Z', 'Y').to_euler()
+    camera_data.type = 'ORTHO'
+    camera_data.ortho_scale = 1450
+    scene.camera = camera
+    note = bpy.data.texts.new('Yunxiu_README')
+    note.write('Technical terrain reference, revision 1597.\nUse camera view (Numpad 0).\nWorld proxy and detail are hidden alternatives, not overlapping render surfaces.\nNo final assets, water shader, collision or gameplay.\n')
     scene['yunxiu_status'] = 'Technical geography import; not an art-quality delivery'
     scene['yunxiu_axis_note'] = 'X east, Y north, Z absolute altitude minus 1700m; metres'
     options.output.parent.mkdir(parents=True, exist_ok=True)

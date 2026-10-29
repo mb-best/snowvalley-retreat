@@ -1,0 +1,30 @@
+{
+  "schema": "yunxiu-material-study/1",
+  "asset": "Boulder 01",
+  "author": "Rico Cilliers",
+  "license": "CC0-1.0",
+  "source": "https://polyhaven.com/a/boulder_01",
+  "credit": "Powered by Poly Haven",
+  "renderer": "Mitsuba 3.9.1",
+  "variant": "scalar_rgb",
+  "renderSeconds": 70.335,
+  "triangles": 66122,
+  "vertices": 67042,
+  "dimensionsMetres": [
+    1.272135615348816,
+    1.830334186553955,
+    1.0038301944732666
+  ],
+  "textures": {
+    "baseColor": "sRGB bitmap",
+    "normal": "linear OpenGL normal bitmap",
+    "roughness": "linear green channel of original ARM bitmap"
+  },
+  "geometry": "real scanned triangles; GLB embeds original mesh and textures without resampling",
+  "mossClumps": 1282,
+  "mossTriangles": 19203,
+  "artStatus": "rock and separate moss geometry sample; wetness masks, close-view LOD and engine behaviour pending",
+  "notGameScreenshot": true,
+  "blenderSceneExecution": "not completed: Metal initialisation crash",
+  "unrealExecution": "not attempted: editor absent"
+}
