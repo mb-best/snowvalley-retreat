@@ -17,7 +17,7 @@
     "codeSignatureVerified": true,
     "installedInWorkspace": true,
     "versionCommand": "passed",
-    "geographyImport": "not reached; process crashed during Metal backend detection",
+    "geographyImport": "completed in native user Terminal; agent process still has Metal detection failure",
     "stackFunctions": [
       "supports_barycentric_whitelist",
       "MTLBackend::metal_is_supported",
@@ -25,7 +25,14 @@
       "wm_homefile_read_ex",
       "WM_init"
     ],
-    "openGLFallback": "not supported by this macOS binary"
+    "openGLFallback": "not supported by this macOS binary",
+    "nativeUserTerminal": {
+      "geographySaved": true,
+      "rockProjectSaved": true,
+      "cyclesRendered": true,
+      "verifiedDate": "2026-10-30",
+      "evidence": "local-blender-success.json"
+    }
   },
   "xcode": "full Xcode absent; command line tools only",
   "unreal": "not installed or executed",
@@ -35,5 +42,5 @@
     "status": "actual rock material render completed",
     "gpuRequired": false
   },
-  "artifactStatus": "portable GLB terrain references and rock/moss sample; no new native game executable"
+  "artifactStatus": "two genuine editable Blender projects and a native Cycles preview verified"
 }

@@ -62,7 +62,8 @@ def load_glb(path):
 
 def main():
     generated=ROOT/'production/native/generated'
-    paths=[generated/'material-study-v02/boulder-01-source.glb',generated/'material-study-v02/yunxiu-rock-moss-v02.glb']
+    paths=[generated/'material-study-v02/boulder-01-source.glb']
+    paths+=sorted(generated.glob('material-study-v*/yunxiu-rock-moss-v*.glb'))
     paths+=list((generated/'revision-1597').glob('yunxiu-geography-*-v01.glb'))
     pinned=json.loads((ROOT/'production/native/asset-sources/boulder-01.json').read_text())
     source_binary=(ROOT/'production/native/assets/boulder-01/boulder_01.bin').read_bytes()
@@ -70,11 +71,11 @@ def main():
     reports=[]
     for path in paths:
         report,images,blob=load_glb(path)
-        if path.parent.name=='material-study-v02':
+        if path.parent.name.startswith('material-study-v'):
             assert expected.issubset(images),'original texture bytes changed'
             assert blob[:len(source_binary)]==source_binary,'original scan mesh buffer changed'
         reports.append(report)
-    result={'schema':'yunxiu-native-assets-check/1','checks':'GLB headers, buffer bounds, accessor sizes/finiteness/normal lengths, position min/max, triangle indices, embedded input byte identity','models':reports,'khronosValidator':'not run; npm registry returned HTTP403','engineCollisionAndLOD':'not implemented or accepted','nativeRender':'CPU offline material sample only'}
+    result={'schema':'yunxiu-native-assets-check/1','checks':'GLB headers, buffer bounds, accessor sizes/finiteness/normal lengths, position min/max, triangle indices, embedded input byte identity','models':reports,'khronosValidator':'not run; npm registry returned HTTP403','engineCollisionAndLOD':'not implemented or accepted','nativeRender':'mesh validation is separate from rendering; verified local Blender v02 output is recorded in evidence/local-blender-success.json'}
     (generated/'native-assets-validation.json').write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps(result,indent=2))
 

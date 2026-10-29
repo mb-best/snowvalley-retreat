@@ -32,7 +32,7 @@ def pack_glb(source, target):
     target.write_bytes(struct.pack('<4sII', b'glTF', 2, total) + struct.pack('<I4s', len(text), b'JSON') + text + struct.pack('<I4s', len(blob), b'BIN\0') + blob)
 
 
-def add_moss_glb(source, target, vertices, normals, colors, uv, faces, normal_png):
+def add_moss_glb(source, target, vertices, normals, colors, uv, faces, normal_png, version=2):
     data=source.read_bytes()
     json_size=struct.unpack_from('<I',data,12)[0]
     doc=json.loads(data[20:20+json_size])
@@ -60,10 +60,10 @@ def add_moss_glb(source, target, vertices, normals, colors, uv, faces, normal_pn
     image_id=len(doc['images']);doc['images'].append({'name':'Yunxiu_Moss_Micro_Normal','bufferView':image_view,'mimeType':'image/png'})
     texture_id=len(doc['textures']);doc['textures'].append({'source':image_id})
     material=len(doc['materials'])
-    doc['materials'].append({'name':'Yunxiu_Moss_Geometry_v02','doubleSided':True,'normalTexture':{'index':texture_id},'pbrMetallicRoughness':{'baseColorFactor':[1,1,1,1],'metallicFactor':0,'roughnessFactor':.95}})
+    doc['materials'].append({'name':f'Yunxiu_Moss_Geometry_v{version:02}','doubleSided':True,'normalTexture':{'index':texture_id},'pbrMetallicRoughness':{'baseColorFactor':[1,1,1,1],'metallicFactor':0,'roughnessFactor':.95}})
     mesh=len(doc['meshes'])
     doc['meshes'].append({'name':'Moss_Leaf_Clumps','primitives':[{'attributes':{'POSITION':position,'NORMAL':normal,'COLOR_0':color,'TEXCOORD_0':texcoord},'indices':index,'material':material}]})
-    node=len(doc['nodes']);doc['nodes'].append({'name':'Yunxiu_Moss_Geometry_v02','mesh':mesh})
+    node=len(doc['nodes']);doc['nodes'].append({'name':f'Yunxiu_Moss_Geometry_v{version:02}','mesh':mesh})
     doc['scenes'][doc.get('scene',0)]['nodes'].append(node)
     doc['extras']={'artStatus':'rock-and-moss asset sample; not final art acceptance','baseAsset':'Boulder 01, Rico Cilliers, CC0-1.0','mossGeometry':'Yunxiu procedural leaf clumps; a separate editable mesh'}
     doc['buffers'][0]['byteLength']=len(blob)
@@ -79,7 +79,10 @@ def main():
     parser.add_argument('--width', type=int, default=1100)
     parser.add_argument('--spp', type=int, default=48)
     parser.add_argument('--moss', action='store_true')
+    parser.add_argument('--moss-style', choices=['patch','cushion'], default='patch')
+    parser.add_argument('--view', choices=['overview','macro'], default='overview')
     options = parser.parse_args()
+    version=3 if options.moss_style=='cushion' else 2
     options.output.mkdir(parents=True, exist_ok=True)
     cache = options.output / 'renderer-cache'
     cache.mkdir(exist_ok=True)
@@ -198,6 +201,9 @@ def main():
             moss_count+=1
             if moss_count>=3400:break
         mp=np.array(positions,np.float32);mn=np.array(moss_normals,np.float32);mc=np.array(moss_colors,np.float32);mf=np.array(moss_faces,np.uint32)
+        if options.moss_style=='cushion':
+            from natural_moss import generate_natural_moss
+            mp,mn,mc,mf,moss_count=generate_natural_moss(vertices,normals,faces)
         moss_faces_count=len(mf)
         # A small tangent-space normal texture gives the attached carpet visible
         # microstructure. It is embedded in GLB as well as used by the renderer.
@@ -219,7 +225,7 @@ def main():
         global_positions=mp+original_offset
         gltf_positions=global_positions[:,[0,2,1]]*np.array([1,1,-1],np.float32)
         gltf_normals=mn[:,[0,2,1]]*np.array([1,1,-1],np.float32)
-        add_moss_glb(options.output/'boulder-01-source.glb',options.output/'yunxiu-rock-moss-v02.glb',gltf_positions,gltf_normals,mc,moss_uv,mf,normal_path.read_bytes())
+        add_moss_glb(options.output/'boulder-01-source.glb',options.output/f'yunxiu-rock-moss-v{version:02}.glb',gltf_positions,gltf_normals,mc,moss_uv,mf,normal_path.read_bytes(),version)
     T = mi.ScalarTransform4f
     base = {
         'type':'scene','integrator':{'type':'path','max_depth':6},
@@ -232,11 +238,17 @@ def main():
                   'sampler':{'type':'independent'},'film':{'type':'hdrfilm','width':options.width,'height':round(options.width*.7),'rfilter':{'type':'tent'}}}
     }
     if moss_mesh is not None:base['moss']=moss_mesh
+    if options.view=='macro':
+        direction=np.array([1.25,-1.72,1.05]);direction/=np.linalg.norm(direction)
+        visible=(mn@direction>.35)&(mp[:,2]>.5)
+        candidates=mp[visible]
+        target=candidates[np.argmin(np.linalg.norm(candidates-np.array([.25,-.2,.76]),axis=1))]
+        base['sensor']['to_world']=T.look_at(origin=(target+direction*.72).tolist(),target=target.tolist(),up=[0,0,1])
     started=time.monotonic()
     scene=mi.load_dict(base)
     print('Rendering scanned rock:', len(faces), 'triangles', flush=True)
     image=mi.render(scene,spp=options.spp,seed=1597)
-    image_name='rock-moss-study-v02.png' if options.moss else 'rock-material-study-v01.png'
+    image_name=(f'rock-moss-study-v{version:02}'+('-macro' if options.view=='macro' else '')+'.png') if options.moss else 'rock-material-study-v01.png'
     mi.util.write_bitmap(str(options.output/image_name),image)
     report={
         'schema':'yunxiu-material-study/1','asset':'Boulder 01','author':'Rico Cilliers','license':'CC0-1.0',
@@ -246,10 +258,13 @@ def main():
         'textures':{'baseColor':'sRGB bitmap','normal':'linear OpenGL normal bitmap','roughness':'linear green channel of original ARM bitmap'},
         'geometry':'real scanned triangles; GLB embeds original mesh and textures without resampling',
         'mossClumps':moss_count,'mossTriangles':moss_faces_count,
+        'mossStyle':options.moss_style,
+        'view':options.view,
         'artStatus':'rock and separate moss geometry sample; wetness masks, close-view LOD and engine behaviour pending' if options.moss else 'material baseline, before custom moss geometry, wetness masks and final palette tuning',
-        'notGameScreenshot':True,'blenderSceneExecution':'not completed: Metal initialisation crash','unrealExecution':'not attempted: editor absent'
+        'notGameScreenshot':True,'blenderSceneExecution':'v02 successfully generated and rendered in user Terminal; this revision remains an offline GLB sample until separately imported','unrealExecution':'not attempted: editor absent'
     }
-    (options.output/'study-report.json').write_text(json.dumps(report,indent=2)+'\n')
+    report_name='study-report-macro.json' if options.view=='macro' else 'study-report.json'
+    (options.output/report_name).write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2),flush=True)
 
 

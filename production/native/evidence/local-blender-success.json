@@ -1,0 +1,70 @@
+{
+  "schema": "yunxiu-local-blender-success/1",
+  "verifiedDate": "2026-10-30",
+  "run": "local-20261030-003551",
+  "executionContext": "native user Terminal",
+  "blender": "4.5.15 LTS",
+  "geographyProjectSaved": true,
+  "rockProjectSaved": true,
+  "cyclesRendered": true,
+  "renderDimensions": [
+    1400,
+    980
+  ],
+  "samples": 96,
+  "renderSecondsFromUserLog": 19.71,
+  "files": [
+    {
+      "file": "yunxiu-geography.blend",
+      "bytes": 21314774,
+      "sha256": "6ecc5514181a6895ac09882795e39e0a05b62573682271a6dd2fe5b30d47aa97"
+    },
+    {
+      "file": "rock-study/yunxiu-rock-moss.blend",
+      "bytes": 21338913,
+      "sha256": "692a14a44c53741550555555ba04a1aa11b55c406ca9823e8a98a41e35ea7a67"
+    },
+    {
+      "file": "rock-study/blender-rock-moss.png",
+      "bytes": 1876593,
+      "sha256": "2df7afa12c94f2afd35b85440c1654994ce6a7fbeaa22d9cbfd02e27165cd022"
+    },
+    {
+      "file": "rock-study/execution.json",
+      "bytes": 107,
+      "sha256": "cb1b438b906c403349c6e2e7c820011d8a88f09ad779cf997afb768d9b266447"
+    }
+  ],
+  "artReview": {
+    "rock": "structure and material baseline usable",
+    "mossV02": "hard patch edges and too little volume; refinement required"
+  },
+  "notGameScreenshot": true,
+  "unrealEngineExecution": "not yet started",
+  "textureEmbedding": [
+    {
+      "file": "boulder_01_diff_2k.jpg",
+      "bytes": 3672483,
+      "sha256": "90bbaa17c1fe0254d2b0b6e5148264fa834953a72724d566f14af029eebe3ca3",
+      "originalBytesEmbeddedInBlend": true
+    },
+    {
+      "file": "boulder_01_nor_gl_2k.jpg",
+      "bytes": 4649207,
+      "sha256": "5174b318712ac7725cbcb55d422607f9c66d7f8d035c5412ab897b5939e2db6b",
+      "originalBytesEmbeddedInBlend": true
+    },
+    {
+      "file": "boulder_01_arm_2k.jpg",
+      "bytes": 2273068,
+      "sha256": "ab52859dde519b4822111aa60916b6d21f8a6966c67b6cec44d1cd0775b8a86a",
+      "originalBytesEmbeddedInBlend": true
+    },
+    {
+      "file": "moss-micro-normal.png",
+      "bytes": 688524,
+      "sha256": "800c73dc350b738b93cbfa884210d99ac2be742678dbf8bf03aa04de07e95a44",
+      "originalBytesEmbeddedInBlend": true
+    }
+  ]
+}

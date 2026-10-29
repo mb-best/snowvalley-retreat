@@ -50,10 +50,11 @@
   },
   "executionStatus": {
     "mapBridge": "data and editable GLB exports executed and checked",
-    "blenderScene": "not executed: Metal detection crash before Python",
+    "blenderScene": "geography and rock .blend projects generated; Cycles preview rendered successfully in user Terminal, verified 2026-10-30",
     "unrealProject": "not created or rendered",
     "finalAssets": "one rock/moss sample created; final style, collision, LOD and engine acceptance pending",
     "blenderEnvironment": "official 4.5.15 portable app installed and version/signature verified",
-    "cpuMaterialStudy": "Mitsuba 3.9.1 scalar_rgb rendered rock and separate moss geometry; not a game screenshot"
+    "cpuMaterialStudy": "Mitsuba 3.9.1 scalar_rgb rendered rock and separate moss geometry; not a game screenshot",
+    "mossV03Experiment": "tested in overview and macro; round cushion form rejected for final art, excluded from default Blender runner"
   }
 }

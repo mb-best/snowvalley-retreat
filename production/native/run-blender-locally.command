@@ -24,18 +24,30 @@ export BLENDER_USER_RESOURCES="$project_dir/production/native/generated/blender-
 mkdir -p "$BLENDER_USER_RESOURCES"
 print '雪隐山居 · 本机 Blender 地形与岩石样品'
 print '这一步创建独立的可编辑样品，不发布或替换在线游戏。'
-node scripts/export-native-terrain.mjs
-node scripts/check-native-terrain.mjs
-node scripts/export-native-study-glb.mjs
+mode="${1:-all}"
+if [[ "$mode" != all && "$mode" != --rock-only ]]; then
+  print '参数应为空，或使用 --rock-only 只生成岩石工程。'
+  exit 1
+fi
+if [[ "$mode" == all ]]; then
+  node scripts/export-native-terrain.mjs
+  node scripts/check-native-terrain.mjs
+  node scripts/export-native-study-glb.mjs
+fi
 run_dir="$project_dir/production/native/generated/local-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$run_dir"
-"$blender_bin" --background --factory-startup --disable-autoexec --python-exit-code 1 \
-  --python production/native/blender/import_geography.py -- \
-  --bundle production/native/generated/revision-1597 --output "$run_dir/yunxiu-geography.blend"
+if [[ "$mode" == all ]]; then
+  "$blender_bin" --background --factory-startup --disable-autoexec --python-exit-code 1 \
+    --python production/native/blender/import_geography.py -- \
+    --bundle production/native/generated/revision-1597 --output "$run_dir/yunxiu-geography.blend"
+fi
 model="$project_dir/production/native/generated/material-study-v02/yunxiu-rock-moss-v02.glb"
 if [[ -s "$model" ]]; then
   "$blender_bin" --background --factory-startup --disable-autoexec --python-exit-code 1 \
     --python production/native/blender/build_rock_asset.py -- \
     --model "$model" --output "$run_dir/rock-study" --render
+else
+  print '未找到岩石GLB。请先运行材质样品生成脚本，再生成岩石工程。'
+  if [[ "$mode" == --rock-only ]]; then exit 1; fi
 fi
 print "\n本机制作完成：$run_dir"

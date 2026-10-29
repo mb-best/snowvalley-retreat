@@ -1,0 +1,41 @@
+{
+  "reviewDate": "2026-10-30",
+  "candidate": "cushion moss v03",
+  "overviewRendered": true,
+  "macroRendered": true,
+  "geometryReport": {
+    "schema": "yunxiu-material-study/1",
+    "asset": "Boulder 01",
+    "author": "Rico Cilliers",
+    "license": "CC0-1.0",
+    "source": "https://polyhaven.com/a/boulder_01",
+    "credit": "Powered by Poly Haven",
+    "renderer": "Mitsuba 3.9.1",
+    "variant": "scalar_rgb",
+    "renderSeconds": 49.086,
+    "triangles": 66122,
+    "vertices": 67042,
+    "dimensionsMetres": [
+      1.272135615348816,
+      1.830334186553955,
+      1.0038301944732666
+    ],
+    "textures": {
+      "baseColor": "sRGB bitmap",
+      "normal": "linear OpenGL normal bitmap",
+      "roughness": "linear green channel of original ARM bitmap"
+    },
+    "geometry": "real scanned triangles; GLB embeds original mesh and textures without resampling",
+    "mossClumps": 3369,
+    "mossTriangles": 101070,
+    "mossStyle": "cushion",
+    "view": "overview",
+    "artStatus": "rock and separate moss geometry sample; wetness masks, close-view LOD and engine behaviour pending",
+    "notGameScreenshot": true,
+    "blenderSceneExecution": "v02 successfully generated and rendered in user Terminal; this revision remains an offline GLB sample until separately imported",
+    "unrealExecution": "not attempted: editor absent"
+  },
+  "acceptedForFinalArt": false,
+  "reason": "macro reveals separate rounded green lumps; still does not match fine natural moss in the approved concept",
+  "defaultBlenderInput": "verified v02 remains the benchmark; no experimental default replacement"
+}
