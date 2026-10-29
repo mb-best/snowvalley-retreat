@@ -3,3 +3,4 @@ migration-output/
 __pycache__/
 *.pyc
 .DS_Store
+production/native/generated/

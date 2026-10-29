@@ -4,6 +4,8 @@
 
 新增 GitHub Pages 独立入口与存档迁移，见 [GitHub 迁移说明](docs/GITHUB-MIGRATION.md)。运行 `node scripts/migration/prepare-pages.mjs` 可生成静态部署目录 `.pages/`。源项目和旧入口不删除。
 
+2026-10-29：美术方向已选择，开始准备 Unreal Engine 5 / Blender 原生制作路线。见 [制作路线与第一阶段交付](production/native/README.md)。当前网页仍为 life-2；原生实景尚未制作或验收。
+
 以下为早期版本的原始说明，供历史对照；最新世界详见 [功能说明](docs/YUNXIU-LIFE-02.md) 与 [美术提案](docs/ART-DIRECTION-02.md)。
 
 ---

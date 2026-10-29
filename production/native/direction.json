@@ -1,0 +1,16 @@
+{
+  "schema": "yunxiu-production-direction/1",
+  "project": "雪隐山居 · 云岫山境",
+  "recordedDate": "2026-10-29",
+  "sourceProposal": "02",
+  "selectionFiles": ["libfile_8e2cd4988ae88191bd32b7186ec77bbc", "libfile_a8b268254fe481918c317aa743cea159"],
+  "selectedBoards": ["01", "02", "03", "04", "05", "07", "08"],
+  "board06": "not recorded; retain the existing Swiss timber-and-stone brief for one review sample, not a batch of approved buildings",
+  "authorization": "The user's 2026-10-29 message authorizes stepwise production following the selected art language, with engine choice unrestricted. This message supersedes the export file's generic non-authorization notice.",
+  "artLanguage": "Bright, colourful alpine reverie; credible anatomy, construction and materials; composed colour, light and living detail.",
+  "primaryRoute": {"runtime": "Unreal Engine 5 desktop, version to be pinned after local preflight", "assetAuthoring": "Blender", "web": "existing playable prototype, map editor, concepts and release portal"},
+  "frozenMap": {"revision": 1597, "sha256": "cf6959526d1ce86c1acaed4ac1743f38ba697a26260ce82396389c90b4c5f757", "metres": [20000, 16000]},
+  "firstStudy": {"name": "晴岚山庄—风镜湖西岸", "contextCentreEastSouthMetres": [1150, -3200], "contextSizeMetres": 1000, "detailSizeMetres": 200, "status": "proposed sample location within the frozen map; no map feature relocation"},
+  "firstRuntimeTarget": {"resolution": "1920x1080", "fps": 30, "status": "unmeasured target, not an achieved result", "hardware": "Apple Silicon detected; model, GPU and memory not verified"},
+  "executionStatus": {"mapBridge": "prepared; see generated validation report", "blenderScene": "not executed", "unrealProject": "not created or rendered", "finalAssets": "not produced or accepted"}
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "yunxiu-native-bridge-validation/1",
+  "sourceRevision": 1597,
+  "sourceMapSha256": "cf6959526d1ce86c1acaed4ac1743f38ba697a26260ce82396389c90b4c5f757",
+  "originalTerrainByteIdentical": true,
+  "sourceFeatures": 331,
+  "activeFeatures": 285,
+  "excludedPresetPaths": 46,
+  "ecology": "exact original copy",
+  "lakes": 20,
+  "rivers": 7,
+  "fallsMetres": [
+    106,
+    85
+  ],
+  "r16Dimensions": [
+    2521,
+    2017
+  ],
+  "r16MaximumEncodingErrorMetres": 0.06250000000272848,
+  "landscapePreviewMeshErrorAtSourceVertices": {
+    "metres": 35.02499999999509,
+    "east": -6100,
+    "south": 6400,
+    "originalAltitude": 3304.5,
+    "previewAltitude": 3269.475000000005
+  },
+  "sourceGridPaddedDimensions": [
+    505,
+    379
+  ],
+  "sourceGridPaddedMaxEncodingErrorMetres": 0.0625,
+  "studyMaximumFloat32ErrorMetres": 0.0001220703125,
+  "roadCrossSectionFixture": "level width, recovered outside shoulder",
+  "nativeRendering": "not executed; data validation is not engine or visual acceptance"
+}
