@@ -1,3 +1,13 @@
+# 雪隐山居 · 云岫山境
+
+当前版本：云岫山境 life-2，20×16 km，完整文件、资源和 26 次既有提交历史均保留。
+
+新增 GitHub Pages 独立入口与存档迁移，见 [GitHub 迁移说明](docs/GITHUB-MIGRATION.md)。运行 `node scripts/migration/prepare-pages.mjs` 可生成静态部署目录 `.pages/`。源项目和旧入口不删除。
+
+以下为早期版本的原始说明，供历史对照；最新世界详见 [功能说明](docs/YUNXIU-LIFE-02.md) 与 [美术提案](docs/ART-DIRECTION-02.md)。
+
+---
+
 # 雪隐山居 · 第二章：翻山听澜
 
 ## 晴日山谷 · 独立美术样板

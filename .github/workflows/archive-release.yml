@@ -1,0 +1,25 @@
+name: Archive source assets and full Git history
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Create verifiable complete migration archive
+        run: python3 scripts/migration/package-migration.py --output "$RUNNER_TEMP/snowvalley-migration.zip"
+      - name: Retain an independent restorable release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tag="backup-${GITHUB_SHA:0:12}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$RUNNER_TEMP/snowvalley-migration.zip" --clobber
+          else
+            gh release create "$tag" "$RUNNER_TEMP/snowvalley-migration.zip" --target "$GITHUB_SHA" --title "Snowvalley full backup ${GITHUB_SHA:0:12}" --notes "Complete source, local assets, map revisions, SHA-256 manifest and independently restorable Git bundle. Browser saves require separate export."
+          fi

@@ -1,0 +1,5 @@
+.pages/
+migration-output/
+__pycache__/
+*.pyc
+.DS_Store
