@@ -1,7 +1,7 @@
 import * as T from'../vendor/three.module.js';
 import{Geography,ALT_BASE,clamp,mix,smooth,hash,MIN_X,MAX_X,MIN_Z,MAX_Z}from'./core.js';
 import{Hydrology}from'./hydrology.js';import{Earthworks,ROAD_MATERIALS,BRIDGE_MATERIALS}from'./earthworks.js';import{BASE_SPEED,JUMP_VELOCITY,GRAVITY,DEFAULT_SPEEDS,SPEED_LABELS,SPEED_LIMITS,speedsFrom,baseSpeedFrom,movementSpeed,clockAdvance,WeatherClock}from'./life-rules.js?v=travel-1';import{WindRider,flightStep}from'./flight.js?v=travel-1';
-import{Assets}from'./assets.js?v=travel-1';import{Landscape}from'./scene.js?v=horizon-2b';import{Foliage}from'./foliage.js?v=travel-1';import{Companions,herbs}from'./companions.js?v=travel-1';
+import{Assets}from'./assets.js?v=travel-1';import{Landscape}from'./scene.js?v=horizon-2c';import{Foliage}from'./foliage.js?v=travel-1';import{Companions,herbs}from'./companions.js?v=travel-1';
 import{AutoTravel,coordinateText,speedText}from'./navigation.js?v=travel-1';
 import{GameRecorder}from'./recording.js?v=travel-1';
 import{Wildlife,WILDLIFE_SPECIES}from'./wildlife.js?v=travel-1';

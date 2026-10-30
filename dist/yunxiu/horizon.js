@@ -4,7 +4,7 @@ import {silhouette,crossTree} from './foliage.js?v=horizon-2';
 import {treeModels} from './assets.js';
 
 const TAU=Math.PI*2,PERIMETER=72000,SEGMENTS=1440;
-export const RINGS=[0,12.5,25,50,100,175,275,400,550,750,1000,1300,1650,2050,2500,3000,3600,4300,5100,6000,7000,8200,9600,11200,13000,15100,17500,20200,23300,26900,31000,35700,41100,47300,54400,62600,72000,83000,96000,112000,132000,156000];
+export const RINGS=[0,12.5,25,50,100,175,275,400,550,750,1000,1300,1650,2050,2500,3000,3600,4300,5100,6000,7000,8200,9600,11200,13000,15100,17500,20200,23300,26900,31000,35700,41100,47300,54400,62600,72000,83000,96000,112000,132000,156000],SEAM_STEPS=5;
 const WRAP=x=>((x%1)+1)%1;
 const wave=(a,seed=0)=>Math.sin(a*3+seed)*.43+Math.sin(a*7+seed*2.1)*.27+Math.sin(a*17-seed)*.17+Math.sin(a*41+seed)*.09+Math.sin(a*97-seed)*.04;
 // Isotropic world-space noise: never stretch a tiny texture over widening rings.
@@ -63,7 +63,7 @@ export class HorizonModel{
    if(Math.min(Math.abs(end[0]-MIN_X),Math.abs(end[0]-MAX_X),Math.abs(end[1]-MIN_Z),Math.abs(end[1]-MAX_Z))>.1)continue;
    const previous=points.at(-2),nx=end[0]<MIN_X+.1?-1:end[0]>MAX_X-.1?1:0,nz=end[1]<MIN_Z+.1?-1:end[1]>MAX_Z-.1?1:0;
    const dx=end[0]-previous[0],dz=end[1]-previous[1],length=Math.hypot(dx,dz)||1;
-   let ux=nx+dx/length*.55,uz=nz+dz/length*.55,unit=Math.hypot(ux,uz);ux/=unit;uz/=unit;
+   let ux=nx+dx/length*.10,uz=nz+dz/length*.10,unit=Math.hypot(ux,uz);ux/=unit;uz/=unit;
    const water=geo.waterAt(end[0]-nx*.02,end[1]-nz*.02),level=water?.height??geo.height(...end)+.22;
    const river={name:path.feature.name,width:path.feature.width||25,points:[]},seed=this.rivers.length*1.91;
    for(let i=0;i<=140;i++){
@@ -112,7 +112,7 @@ export class HorizonModel{
    // A floodplain grows with distance as the terrain LOD becomes coarser.
    // The water stays above ground without needing an unresolved razor trench.
    const strength=(1-smooth(floor,width,distance))*smooth(0,Math.max(120,distance*1.6),d)*(1-smooth(10500,14000,along));
-   const weight=strength*(80/(80+distance))**6;
+   const weight=strength*(80/(80+distance))**4;
    channelWeight+=weight;channelLevel+=(level-2.4)*weight;influence=Math.max(influence,strength);
   }
   if(channelWeight>0)y=mix(y,channelLevel/channelWeight,influence);
@@ -147,17 +147,25 @@ export class DistantLandscape{
   this.makeApron();this.matchBoundaryNormals();this.makeRivers();this.makePanoramas();this.makeForest();land.scene.add(this.group);
  }
  makeApron(){
-  const n=SEGMENTS+1,p=[],uv=[],outside=[],indices=[];
+  const n=SEGMENTS+1,p=[],uv=[],outside=[],indices=[],forest=[],normals=[];
+  const append=(u,d)=>{
+   const q=this.model.at(u,d),normal=this.model.normal(q.x,q.z);
+   p.push(q.x,q.y,q.z);uv.push(u,d/156000);outside.push(q.d);forest.push(q.forest);normals.push(normal.x,normal.y,normal.z);
+  };
   for(let j=0;j<RINGS.length;j++)for(let i=0;i<=SEGMENTS;i++){
-   const q=this.model.at(i/SEGMENTS,RINGS[j]);p.push(q.x,q.y,q.z);uv.push(i/SEGMENTS,j/(RINGS.length-1));outside.push(q.d);
-   if(j<RINGS.length-1&&i<SEGMENTS){const k=j*n+i;indices.push(k,k+1,k+n,k+1,k+n+1,k+n);}
+   append(i/SEGMENTS,RINGS[j]);
+   if(j>0&&j<RINGS.length-1&&i<SEGMENTS){const k=j*n+i;indices.push(k,k+1,k+n,k+1,k+n+1,k+n);}
   }
-  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setAttribute('exteriorDistance',new T.Float32BufferAttribute(outside,1));g.setIndex(indices);g.computeVertexNormals();
-  const forest=[];
-  for(let j=0;j<RINGS.length;j++)for(let i=0;i<=SEGMENTS;i++){
-   const q=this.model.at(i/SEGMENTS,RINGS[j]);forest.push(q.forest);
-   const normal=this.model.normal(q.x,q.z);g.attributes.normal.setXYZ(j*n+i,normal.x,normal.y,normal.z);
+  // A fine 10 m inner ribbon meets the hydraulic terrain tiles. A triangle fan
+  // joins it to the first coarse ring without a crack or overlapping ground.
+  const seamOffset=p.length/3;
+  for(let i=0;i<=SEGMENTS*SEAM_STEPS;i++)append(i/(SEGMENTS*SEAM_STEPS),0);
+  for(let i=0;i<SEGMENTS;i++){
+   const inner=seamOffset+i*SEAM_STEPS,outer=n+i;
+   for(let k=0;k<SEAM_STEPS;k++)indices.push(inner+k,inner+k+1,outer);
+   indices.push(inner+SEAM_STEPS,outer+1,outer);
   }
+  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('normal',new T.Float32BufferAttribute(normals,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setAttribute('exteriorDistance',new T.Float32BufferAttribute(outside,1));g.setIndex(indices);
   g.setAttribute('exteriorForest',new T.Float32BufferAttribute(forest,1));
   const material=this.land.terrainMat.clone(),original=this.land.terrainMat.onBeforeCompile;
   // Solid ground writes depth in the same pass as the playable terrain.
@@ -180,11 +188,13 @@ export class DistantLandscape{
   this.apron=new T.Mesh(g,material);this.apron.name='Edge-matched textured terrain';this.apron.receiveShadow=false;this.group.add(this.apron);
  }
  matchBoundaryNormals(){
-  const g=this.land.terrain?.geometry;if(!g)return;const p=g.attributes.position,n=g.attributes.normal;
-  for(let i=0;i<p.count;i++){
-   const x=p.getX(i),z=p.getZ(i);if(x!==MIN_X&&x!==MAX_X&&z!==MIN_Z&&z!==MAX_Z)continue;
-   const normal=this.model.normal(x,z);n.setXYZ(i,normal.x,normal.y,normal.z);
-  }n.needsUpdate=true;
+  for(const mesh of[this.land.terrain,this.land.groundChanges?.hydroMesh]){
+   if(!mesh)continue;const p=mesh.geometry.attributes.position,n=mesh.geometry.attributes.normal;
+   for(let i=0;i<p.count;i++){
+    const x=p.getX(i),z=p.getZ(i);if(x!==MIN_X&&x!==MAX_X&&z!==MIN_Z&&z!==MAX_Z)continue;
+    const normal=this.model.normal(x,z);n.setXYZ(i,normal.x,normal.y,normal.z);
+   }n.needsUpdate=true;
+  }
   if(this.land.boundarySkirt)this.land.boundarySkirt.visible=false;
  }
  matchNearNormals(){

@@ -32,3 +32,15 @@ const left=castY(sx+6,sz-1.8),right=castY(sx+6,sz+1.8);assert(Number.isFinite(le
 
 assert.equal(land.estates.length,3);for(const e of land.estates){assert(e.buildings>=2&&e.buildings<=3);assert(e.fencePosts>20);const homes=land.houses.filter(h=>h.placeId===e.townId);assert(homes.every(h=>h.width>=19&&h.root.userData.lodge));assert(!land.collides(...e.gate,.4),'Lodge gateway remains open');}
 const chosen=geo.hydrology.lakeRecords[0],eye=new T.Vector3(chosen.deepest[0],chosen.level+80,chosen.deepest[1]);land.updateReflection(eye,{position:eye});assert(land.mirror.visible);const surface=land.lakeSurfaces.get(land.mirrorId);assert.equal(surface.mesh.visible,false,'Exactly one visible surface at the reflection lake');assert(surface.depth.texture.image.data.some(v=>v>240));eye.y=chosen.level-3;land.updateReflection(eye,{position:eye});assert(!land.mirror.visible&&surface.mesh.visible,'Underwater view has no mirror overlay');console.log({lodgeEstatesAndLargeBuildings:'passed',openGateways:'passed',lakeDepthTexture:'passed',singleLayerWaterAndUnderwater:'passed'});
+
+let joinedNormals=0;
+for(const mesh of[land.terrain,land.groundChanges.hydroMesh]){
+ const p=mesh.geometry.attributes.position,n=mesh.geometry.attributes.normal;
+ for(let i=0;i<p.count;i++){
+  const x=p.getX(i),z=p.getZ(i);if(Math.abs(x)!==10000&&Math.abs(z)!==8000)continue;
+  const expected=land.horizon.model.normal(x,z),actual=new T.Vector3().fromBufferAttribute(n,i);
+  assert(actual.distanceTo(expected)<1e-6,'Playable ground and hydraulic patches share exterior normals');joinedNormals++;
+ }
+}
+assert(joinedNormals>1440);assert.equal(land.boundarySkirt.visible,false);
+console.log({baseAndHydraulicBoundaryNormals:joinedNormals,hiddenVerticalSkirt:'passed'});

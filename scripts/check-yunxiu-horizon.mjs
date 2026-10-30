@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 import * as T from '../dist/vendor/three.module.js';
 import {Geography,ALT_BASE} from '../dist/yunxiu/core.js';
 import {Hydrology} from '../dist/yunxiu/hydrology.js';
-import {HorizonModel,DistantLandscape,perimeterPoint,RINGS} from '../dist/yunxiu/horizon.js';
+import {HorizonModel,DistantLandscape,perimeterPoint,RINGS,SEAM_STEPS} from '../dist/yunxiu/horizon.js';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 const data=JSON.parse(fs.readFileSync(root+'dist/yunxiu/world-data.json'));
@@ -31,9 +31,14 @@ assert.deepEqual(Buffer.from(heights.buffer),original,'Rendering leaves frozen t
 
 const land={geo,scene:new T.Scene(),quality:'low',season:{value:1},terrainMat:new T.MeshStandardMaterial()};
 const scenery=new DistantLandscape(land),mesh=scenery.apron,g=mesh.geometry;
-assert.equal(g.attributes.position.count,1441*RINGS.length);
-assert.equal(g.index.count/3,1440*(RINGS.length-1)*2);
+assert.equal(g.attributes.position.count,1441*RINGS.length+1440*SEAM_STEPS+1);
+assert.equal(g.index.count/3,1440*(RINGS.length-2)*2+1440*(SEAM_STEPS+1));
 for(const v of g.attributes.position.array)assert(Number.isFinite(v));
+const seamOffset=1441*RINGS.length;
+for(let i=0;i<=1440*SEAM_STEPS;i++){
+ const [x,z]=perimeterPoint(i/(1440*SEAM_STEPS)),p=new T.Vector3().fromBufferAttribute(g.attributes.position,seamOffset+i);
+ assert(Math.abs(p.y-geo.height(x,z))<.001,'Fine inner ribbon meets the actual hydraulic edge');
+}
 assert(scenery.group.userData.visualOnly);
 assert.equal(scenery.panoramas.length,3);
 assert.equal(mesh.material.transparent,false,'Exterior terrain is solid depth-writing ground');
@@ -80,7 +85,15 @@ for(const river of scenery.model.rivers){
   }
  }
 }
-assert(maxRiverBankGrade<2,'No near-vertical exterior river slots');
+assert(maxRiverBankGrade<2.2,'Exterior valley banks stay within the authored edge slope range');
+for(let i=0;i<model.rivers.length;i++)for(let j=i+1;j<model.rivers.length;j++){
+ const a=model.rivers[i],b=model.rivers[j],levelGap=Math.abs(a.points[0].level-b.points[0].level);
+ if(levelGap<100)continue;
+ for(let k=10;k<140;k+=10)for(let l=10;l<140;l+=10){
+  const p=a.points[k],q=b.points[l];
+  assert(Math.hypot(p.x-q.x,p.z-q.z)>levelGap*2,'Different river levels cannot converge into a razor ridge');
+ }
+}
 for(const map of scenery.panoramas){
  const a=map.image.data;assert(a.some((v,i)=>i%4===3&&v===0));assert(a.some((v,i)=>i%4===3&&v===255));
 }

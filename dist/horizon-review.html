@@ -4,8 +4,9 @@
 import * as T from './vendor/three.module.js';
 import {Geography,ALT_BASE} from './yunxiu/core.js';
 import {Hydrology} from './yunxiu/hydrology.js';
-import {Landscape} from './yunxiu/scene.js?v=horizon-2b';
-import {DistantLandscape} from './yunxiu/horizon.js?v=horizon-2b';
+import {Landscape} from './yunxiu/scene.js?v=horizon-2c';
+import {DistantLandscape} from './yunxiu/horizon.js?v=horizon-2c';
+import {GroundChanges} from './yunxiu/ground-changes.js?v=horizon-2c';
 import {Assets} from './yunxiu/assets.js';
 import {Foliage} from './yunxiu/foliage.js?v=horizon-2';
 const params=new URLSearchParams(location.search);
@@ -15,7 +16,7 @@ const scene=new T.Scene();scene.fog=new T.FogExp2('#adc8cf',.00004);
 const renderer=new T.WebGLRenderer({antialias:true,logarithmicDepthBuffer:true,preserveDrawingBuffer:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(1);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.02;document.body.append(renderer.domElement);
 const camera=new T.PerspectiveCamera(55,innerWidth/innerHeight,.2,220000),hemi=new T.HemisphereLight('#d1e4ed','#8d9169',1.63),sun=new T.DirectionalLight('#fff2d7',2.7);sun.position.set(-450,700,300);scene.add(hemi,sun);
 const assets=params.has('forest')?new Assets():{};if(assets.load)await assets.load();
-const land=new Landscape(scene,geo,assets,'low');land.makeTerrain();land.makeWater();land.makeSky();const horizon=new DistantLandscape(land);horizon.configureSky(land.sky.material);
+const land=new Landscape(scene,geo,assets,'low');land.makeTerrain();land.groundChanges=new GroundChanges(land);land.makeWater();land.makeSky();const horizon=new DistantLandscape(land);horizon.configureSky(land.sky.material);
 const forest=assets.load?new Foliage(scene,geo,assets,land,'low'):null;if(forest){forest.makeFar();forest.farCut.value=0;}
 const presets=[];
 for(let side=0;side<4;side++){
