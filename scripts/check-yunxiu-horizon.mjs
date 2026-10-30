@@ -101,6 +101,7 @@ const sky=new T.ShaderMaterial({uniforms:{},fragmentShader:'uniform float uDay,u
 scenery.configureSky(sky);
 assert(sky.fragmentShader.indexOf('uniform float uDay')<sky.fragmentShader.indexOf('vec3 horizonLayer'));
 assert(sky.fragmentShader.includes('uHorizonFog'),'Sky and distant terrain share horizon fog color');
+assert(sky.fragmentShader.includes('1.-smoothstep(0.,.10,d.y)'),'The horizontal sky ray exactly matches fully fogged terrain');
 const shader={vertexShader:T.ShaderLib.standard.vertexShader,fragmentShader:T.ShaderLib.standard.fragmentShader,uniforms:{}};
 mesh.material.onBeforeCompile(shader);
 assert(!shader.fragmentShader.includes('opticalDepth'),'No reduced-fog exterior sheet');

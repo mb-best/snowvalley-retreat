@@ -326,7 +326,7 @@ export class DistantLandscape{
    }
    gl_FragColor=vec4(c,1.);`);
   material.fragmentShader=material.fragmentShader.replace('#include <colorspace_fragment>',`#include <colorspace_fragment>
-   gl_FragColor.rgb=mix(gl_FragColor.rgb,uHorizonFog,1.-smoothstep(-.10,.018,d.y));`);
+   gl_FragColor.rgb=mix(gl_FragColor.rgb,uHorizonFog,1.-smoothstep(0.,.10,d.y));`);
   material.needsUpdate=true;
   if(this.land.sky)this.land.sky.onBeforeRender=(_renderer,_scene,camera)=>this.update(camera);
  }

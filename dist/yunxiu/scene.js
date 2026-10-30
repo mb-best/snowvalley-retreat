@@ -1,7 +1,7 @@
-import{DistantLandscape}from'./horizon.js?v=horizon-2c';
+import{DistantLandscape}from'./horizon.js?v=horizon-2d';
 import{depthTexture,configureLakeMaterial,configureReflection}from'./water-optics.js?v=travel-1';
 import{buildEstate}from'./estates.js?v=travel-1';
-import{GroundChanges}from'./ground-changes.js?v=horizon-2c';
+import{GroundChanges}from'./ground-changes.js?v=horizon-2d';
 import{Reflector}from'../vendor/addons/objects/Reflector.js';
 import * as T from'../vendor/three.module.js';
 import{ALT_BASE,MIN_X,MAX_X,MIN_Z,MAX_Z,clamp,mix,smooth,hash,worldPoint,Spatial}from'./core.js';
