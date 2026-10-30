@@ -1,9 +1,12 @@
 import{clamp}from'./core.js';
-export const BASE_SPEED=4/3.6,MAX_ALTITUDE=8000,JUMP_VELOCITY=10.2,GRAVITY=18;
+// The user's km/m is interpreted literally as kilometres per minute.
+export const BASE_SPEED=10000/60,MAX_ALTITUDE=8000,JUMP_VELOCITY=10.2,GRAVITY=18;
 export const DEFAULT_SPEEDS={walkBoost:3,horse:6,horseBoost:12,flight:10,flightBoost:20,vertical:6,uphill:1,downhill:1};
+export const SPEED_LIMITS={walkBoost:20,horse:20,horseBoost:20,flight:20,flightBoost:100,vertical:40,uphill:20,downhill:20};
 export const SPEED_LABELS={walkBoost:'步行 · 按加速键',horse:'骑马 · 常速',horseBoost:'骑马 · 按加速键',flight:'飞行 · 常速',flightBoost:'飞行 · 按加速键',vertical:'飞行 · 上升／下降',uphill:'上坡速度扣减',downhill:'下坡速度增加'};
-export function speedsFrom(value={}){return Object.fromEntries(Object.entries(DEFAULT_SPEEDS).map(([k,v])=>[k,clamp(Number(value[k])||v,1,20)]));}
-export function movementSpeed(settings,{flying=false,riding=false,boost=false,grade=0}={}){let n=flying?(boost?settings.flightBoost:settings.flight):riding?(boost?settings.horseBoost:settings.horse):boost?settings.walkBoost:1;if(!flying)n+=grade>0?-settings.uphill*Math.min(1,grade):settings.downhill*Math.min(1,-grade);return BASE_SPEED*clamp(n,.25,20);}
+export function speedsFrom(value={}){return Object.fromEntries(Object.entries(DEFAULT_SPEEDS).map(([k,v])=>[k,clamp(Number(value?.[k])||v,1,SPEED_LIMITS[k])]));}
+export function baseSpeedFrom(value){const n=Number(value);return [BASE_SPEED,10/3.6,4/3.6].find(v=>Math.abs(v-n)<1e-8)??BASE_SPEED;}
+export function movementSpeed(settings,{flying=false,riding=false,boost=false,grade=0,baseSpeed=BASE_SPEED}={}){let n=flying?(boost?settings.flightBoost:settings.flight):riding?(boost?settings.horseBoost:settings.horse):boost?settings.walkBoost:1;if(!flying)n+=grade>0?-settings.uphill*Math.min(1,grade):settings.downhill*Math.min(1,-grade);return baseSpeed*clamp(n,.25,flying&&boost?100:20);}
 export function clockAdvance(realSeconds,dayMinutes){return realSeconds/(clamp(dayMinutes,10,1440)*60)*24;}
 export class WeatherClock{
  constructor(interval=5){this.interval=Math.max(5,Number(interval)||5)*60;this.elapsed=0;}

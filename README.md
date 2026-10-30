@@ -1,6 +1,8 @@
 # 雪隐山居 · 云岫山境
 
-当前版本：云岫山境 life-2，20×16 km，完整文件、资源和 26 次既有提交历史均保留。
+当前网页版：云岫山境 travel-1，20×16 km。新增可调高速漫游、加速姿态、实时坐标/速度、交互地图与导航、山庄院落、深水湖面、MP4 录屏和八种野生动物，见 [行旅更新说明](docs/YUNXIU-TRAVEL-01.md)。完整文件、资源、既有版本历史和浏览器存档键均保留。
+
+网页与 UE5 / Blender 原生制作按 [开发分工](docs/DEVELOPMENT-LANES.md) 在独立目录及分支中推进。
 
 新增 GitHub Pages 独立入口与存档迁移，见 [GitHub 迁移说明](docs/GITHUB-MIGRATION.md)。运行 `node scripts/migration/prepare-pages.mjs` 可生成静态部署目录 `.pages/`。源项目和旧入口不删除。
 

@@ -2,6 +2,8 @@
 
 2026-10-30。用户将 UE5 + Blender 制作移到新会话，本会话继续 Three.js 网页应用。分工见 [开发分流](DEVELOPMENT-LANES.md)。
 
+> 本文为会话分流时的基线快照。之后的网页版改进见 [travel-1 更新](YUNXIU-TRAVEL-01.md)。
+
 ## 已建立的独立工作副本
 
 - 本机：共同工作区的 `snowvalley-web/`。

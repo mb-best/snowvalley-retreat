@@ -1,0 +1,46 @@
+import * as T from'../vendor/three.module.js';
+import{hash,moveGround}from'./core.js';
+import{join}from'../sunny/plants.js?v=2';
+
+export const WILDLIFE_SPECIES=[
+ {id:'fox',name:'赤狐',color:'#b7753c',min:1700,max:3500,size:1,habitat:'mixed',speed:1.5},
+ {id:'deer',name:'山地鹿',color:'#9a7950',min:1700,max:3400,size:1,habitat:'forest',speed:1.2},
+ {id:'goat',name:'岩羊',color:'#8e9387',min:2900,max:4700,size:1,habitat:'rock',speed:1},
+ {id:'hare',name:'野兔',color:'#b4a58a',min:1800,max:4000,size:.65,habitat:'meadow',speed:.9},
+ {id:'marmot',name:'旱獭',color:'#998366',min:2400,max:4000,size:.7,habitat:'meadow',speed:.5},
+ {id:'squirrel',name:'松鼠',color:'#9e6741',min:1700,max:3400,size:.48,habitat:'forest',speed:1.1},
+ {id:'pheasant',name:'雉鸡',color:'#866648',min:1700,max:3300,size:.75,habitat:'mixed',speed:.65},
+ {id:'eagle',name:'山鹰',color:'#6e6656',min:1700,max:6800,size:1.1,habitat:'sky',speed:8}
+];
+export function speciesAllowed(species,eco){return eco.altitude>=species.min&&eco.altitude<=species.max&&(species.habitat==='sky'||species.habitat==='forest'?(species.habitat==='sky'||eco.tree>.05):species.habitat==='meadow'?eco.grass>.08:species.habitat==='rock'?eco.altitude>2900&&eco.grade<1.1:eco.grass+eco.tree>.06);}
+
+let furTexture;
+function fur(){if(furTexture)return furTexture;const c=document.createElement('canvas');c.width=c.height=128;const ctx=c.getContext('2d');ctx.fillStyle='#c6b99b';ctx.fillRect(0,0,128,128);for(let i=0;i<1800;i++){const x=hash(i,4)*128,y=hash(i,9)*128;ctx.strokeStyle=i%2?'#e5dcc4':'#8b816c';ctx.globalAlpha=.25;ctx.lineWidth=.4;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+(hash(i,8)-.5)*3,y+2+hash(i,5)*4);ctx.stroke();}const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;furTexture=t;return t;}
+function mergeBody(root,exclude){const buckets=new Map();for(const m of[...root.children]){if(!m.isMesh||exclude.includes(m))continue;m.updateMatrix();const k=m.material.uuid;if(!buckets.has(k))buckets.set(k,{material:m.material,parts:[]});buckets.get(k).parts.push(m.geometry.clone().applyMatrix4(m.matrix));root.remove(m);}for(const v of buckets.values()){const m=new T.Mesh(join(v.parts),v.material);m.castShadow=true;m.receiveShadow=true;root.add(m);v.parts.forEach(p=>p.dispose());}}
+export function makeWildlife(species){
+ let tailObject=null;const root=new T.Group(),coat=new T.MeshStandardMaterial({color:species.color,map:fur(),roughness:.94}),dark=new T.MeshStandardMaterial({color:'#2d3029',roughness:.67}),cream=new T.MeshStandardMaterial({color:'#e2d5b6',roughness:.9}),horn=new T.MeshStandardMaterial({color:'#b3a083',roughness:.78}),legs=[],wings=[];
+ const ball=(parent,mat,p,s)=>{const m=new T.Mesh(new T.SphereGeometry(1,12,8),mat);m.position.set(...p);m.scale.set(...s);m.castShadow=true;parent.add(m);return m;},ear=(x,y,z,long=false)=>{const m=new T.Mesh(new T.ConeGeometry(long?.075:.11,long?.58:.28,7),coat);m.position.set(x,y,z);root.add(m);const inner=m.clone();inner.material=cream;inner.scale.set(.5,.77,.5);inner.position.z-=.02;root.add(inner);};
+ const bird=['eagle','pheasant'].includes(species.id),small=['hare','marmot','squirrel'].includes(species.id),goat=species.id==='goat',deer=species.id==='deer';
+ if(bird){ball(root,coat,[0,.65,0],[.22,.28,.44]);ball(root,coat,[0,.92,-.33],[.14,.2,.18]);const beak=new T.Mesh(new T.ConeGeometry(.065,.23,5),horn);beak.rotation.x=-Math.PI/2;beak.position.set(0,.92,-.58);root.add(beak);
+  if(species.id==='eagle'){for(const side of[-1,1]){const wing=new T.Group();wing.position.set(side*.13,.75,0);for(let j=0;j<8;j++){const feather=ball(wing,j%2?dark:coat,[side*(.19+j*.12),0,.04+j*.035],[.1,.035,.45-j*.025]);feather.rotation.y=side*-.15;}root.add(wing);wings.push({group:wing,side});}}else{ball(root,coat,[.19,.66,.03],[.08,.2,.31]);ball(root,coat,[-.19,.66,.03],[.08,.2,.31]);ball(root,new T.MeshStandardMaterial({color:'#61776a',roughness:.65}),[0,.93,-.34],[.15,.18,.17]);}
+  const tail=ball(root,dark,[0,.63,.7],[.12,.045,species.id==='pheasant'?.57:.35]);tailObject=tail;
+ }else{const h=deer?.95:goat?.79:small?.37:.48,bodyLen=deer?.69:goat?.62:small?.38:.6;ball(root,coat,[0,h,0],[small?.26:.3,small?.27:.37,bodyLen]);ball(root,coat,[0,h+.32,-bodyLen*.72],[small?.16:.18,small?.21:.28,small?.2:.28]);ball(root,coat,[0,h+.32,-bodyLen- .15],[small?.12:.13,.12,small?.18:.29]);ball(root,dark,[0,h+.32,-bodyLen-(small?.31:.41)],[.055,.05,.06]);ball(root,cream,[0,h-.06,-.18],[.23,.23,bodyLen*.75]);
+  for(const side of[-1,1]){ear(side*.15,h+.62,-bodyLen*.72,species.id==='hare');if(deer||goat){const path=goat?[new T.Vector3(side*.15,h+.5,-bodyLen*.7),new T.Vector3(side*.25,h+.85,-bodyLen*.55),new T.Vector3(side*.31,h+.76,-bodyLen*.18)]:[new T.Vector3(side*.13,h+.5,-bodyLen*.7),new T.Vector3(side*.28,h+1.05,-bodyLen*.5),new T.Vector3(side*.45,h+1.25,-bodyLen*.68)];const antler=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(path),8,goat?.065:.035,5,false),horn);root.add(antler);if(deer){const twig=new T.Mesh(new T.ConeGeometry(.025,.36,5),horn);twig.position.set(side*.32,h+1.13,-bodyLen*.65);twig.rotation.z=side*-.5;root.add(twig);}}}
+  for(const side of[-1,1])for(const end of[-1,1]){const leg=new T.Group();leg.position.set(side*(small?.17:.22),h-.12,end*bodyLen*.66);ball(leg,coat,[0,-h*.37,0],[small?.065:.075,h*.45,.09]);ball(leg,dark,[0,-h*.82,-.04],[.09,.07,.13]);root.add(leg);legs.push(leg);}
+  const tail=new T.Group();tail.position.set(0,h,bodyLen*.8);const s=species.id==='fox'?[.17,.17,.55]:species.id==='squirrel'?[.22,.4,.36]:[.09,.09,.18];ball(tail,coat,[0,species.id==='squirrel'?.3:0,.27],s);if(species.id==='fox')ball(tail,cream,[0,-.02,.76],[.12,.12,.15]);root.add(tail);tailObject=tail;
+ }
+ for(const side of[-1,1])ball(root,dark,[side*(bird?.11:small?.13:.16),bird?.98:(deer?.95:goat?.79:small?.37:.48)+.39,bird?-.45:-(deer?.69:goat?.62:small?.38:.6)-.14],[.025,.029,.02]);
+ legs.forEach((p,i)=>p.name='wild-leg-'+i);wings.forEach((p,i)=>p.group.name='wild-wing-'+i);if(tailObject)tailObject.name='wild-tail';mergeBody(root,tailObject?[tailObject]:[]);root.scale.setScalar(species.size);root.userData.species=species.id;return{root,legs,wings,tail:tailObject};
+}
+
+export class Wildlife{
+ constructor(scene,geo,landscape,seed=1){Object.assign(this,{scene,geo,landscape,seed});this.animals=[];this.cell='';this.observed=new Set();this.templates=new Map();}
+ model(species){if(!this.templates.has(species.id))this.templates.set(species.id,makeWildlife(species));const template=this.templates.get(species.id),root=template.root.clone(true);return{root,legs:template.legs.map((_,i)=>root.getObjectByName('wild-leg-'+i)),wings:template.wings.map((p,i)=>({group:root.getObjectByName('wild-wing-'+i),side:p.side})),tail:root.getObjectByName('wild-tail')};}
+ refresh(player){const cell=Math.floor(player.x/220)+':'+Math.floor(player.z/220);if(this.cell===cell)return;this.cell=cell;for(const a of this.animals)this.scene.remove(a.root);this.animals=[];const cx=Math.floor(player.x/220),cz=Math.floor(player.z/220);
+  for(let dz=-2;dz<=2;dz++)for(let dx=-2;dx<=2;dx++){if(this.animals.length>=22)break;const i=cx+dx,j=cz+dz,x=i*220+hash(i,j,this.seed)*200,z=j*220+hash(j,i,this.seed+7)*200;if(Math.abs(x)>9950||Math.abs(z)>7950||this.geo.waterAt(x,z)||this.landscape.collides(x,z,3)||this.landscape.estates?.some(e=>x>e.bounds[0]&&x<e.bounds[2]&&z>e.bounds[1]&&z<e.bounds[3])||this.geo.settlements.some(t=>Math.hypot(x-t.point[0],z-t.point[1])<90))continue;const eco=this.geo.ecological(x,z),candidates=WILDLIFE_SPECIES.filter(s=>speciesAllowed(s,eco));if(!candidates.length)continue;const species=candidates[Math.floor(hash(i,j,this.seed+13)*candidates.length)],model=this.model(species),y=this.geo.height(x,z);model.root.position.set(x,y,z);this.scene.add(model.root);this.animals.push({...model,species,x,z,homeX:x,homeZ:z,phase:hash(i,j,43)*6.28,angle:hash(i,j,29)*6.28,flying:species.id==='eagle'});}
+ }
+ update(dt,time,player,state){const high=state.flying&&player.y-this.geo.height(player.x,player.z)>350;if(!high)this.refresh(player);for(const a of this.animals){const distance=Math.hypot(a.x-player.x,a.z-player.z);a.root.visible=!high&&distance<650;if(!a.root.visible)continue;if(distance<90)this.observed.add(a.species.name);const fleeing=distance<16,moving=a.flying||fleeing||Math.sin(time*.22+a.phase)>.35,phase=time*(fleeing?10:4)+a.phase;if(fleeing)a.angle=Math.atan2(a.x-player.x,a.z-player.z);else if(Math.hypot(a.x-a.homeX,a.z-a.homeZ)>32)a.angle=Math.atan2(a.homeX-a.x,a.homeZ-a.z);else a.angle+=Math.sin(time*.13+a.phase)*dt*.18;
+   if(moving){const speed=a.species.speed*(fleeing?2.4:1),dx=Math.sin(a.angle)*speed*dt,dz=Math.cos(a.angle)*speed*dt;if(a.flying){a.x+=dx;a.z+=dz;}else{const p=moveGround(this.geo,a,dx,dz,(x,z)=>this.landscape.collides(x,z,.4)||this.landscape.obstacleTest?.(x,z));a.x=p.x;a.z=p.z;}}
+   const bounce=a.species.id==='hare'&&moving?Math.abs(Math.sin(phase))*.16:0,y=this.geo.height(a.x,a.z);a.root.position.set(a.x,y+bounce+(a.flying?35+Math.sin(time*.23+a.phase)*8:0),a.z);a.root.rotation.y=a.angle+Math.PI;for(let i=0;i<a.legs.length;i++)a.legs[i].rotation.x=moving?Math.sin(phase+(i%2)*Math.PI)*.45:0;for(const w of a.wings)w.group.rotation.z=w.side*(Math.sin(time*2.4+a.phase)*.13+.08);if(a.tail&&!a.tail.isMesh)a.tail.rotation.y=Math.sin(time*2+a.phase)*.16;
+  }}
+}
