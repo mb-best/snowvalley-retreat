@@ -4,21 +4,27 @@
 import * as T from './vendor/three.module.js';
 import {Geography,ALT_BASE} from './yunxiu/core.js';
 import {Hydrology} from './yunxiu/hydrology.js';
-import {Landscape} from './yunxiu/scene.js';
-import {DistantLandscape} from './yunxiu/horizon.js';
+import {Landscape} from './yunxiu/scene.js?v=horizon-2b';
+import {DistantLandscape} from './yunxiu/horizon.js?v=horizon-2b';
+import {Assets} from './yunxiu/assets.js';
+import {Foliage} from './yunxiu/foliage.js?v=horizon-2';
+const params=new URLSearchParams(location.search);
 const data=await (await fetch('./yunxiu/world-data.json')).json(),bytes=new Uint8Array(await (await fetch('./yunxiu/terrain-1597.f32')).arrayBuffer());
 const geo=new Geography(data,new Float32Array(bytes.buffer));new Hydrology(geo);
 const scene=new T.Scene();scene.fog=new T.FogExp2('#adc8cf',.00004);
 const renderer=new T.WebGLRenderer({antialias:true,logarithmicDepthBuffer:true,preserveDrawingBuffer:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(1);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.02;document.body.append(renderer.domElement);
 const camera=new T.PerspectiveCamera(55,innerWidth/innerHeight,.2,220000),hemi=new T.HemisphereLight('#d1e4ed','#8d9169',1.63),sun=new T.DirectionalLight('#fff2d7',2.7);sun.position.set(-450,700,300);scene.add(hemi,sun);
-const land=new Landscape(scene,geo,{},'low');land.makeTerrain();land.makeWater();land.makeSky();const horizon=new DistantLandscape(land);horizon.configureSky(land.sky.material);
+const assets=params.has('forest')?new Assets():{};if(assets.load)await assets.load();
+const land=new Landscape(scene,geo,assets,'low');land.makeTerrain();land.makeWater();land.makeSky();const horizon=new DistantLandscape(land);horizon.configureSky(land.sky.material);
+const forest=assets.load?new Foliage(scene,geo,assets,land,'low'):null;if(forest){forest.makeFar();forest.farCut.value=0;}
 const presets=[];
 for(let side=0;side<4;side++){
  const border=horizon.model.border.filter(p=>side===0?p.z===-8000:side===1?p.x===10000:side===2?p.z===8000:p.x===-10000).sort((a,b)=>a.h-b.h);
  for(const [kind,p]of [['谷口',border[15]],['山脊',border.at(-16)]])presets.push({name:['北','东','南','西'][side]+kind,x:Math.max(-9998,Math.min(9998,p.x)),z:Math.max(-7998,Math.min(7998,p.z)),dx:[0,1,0,-1][side],dz:[-1,0,1,0][side]});
 }
 for(const[x,z,name]of[[-9998,-7998,'西北角'],[9998,-7998,'东北角'],[9998,7998,'东南角'],[-9998,7998,'西南角']])presets.push({name,x,z,dx:Math.sign(x)*.707,dz:Math.sign(z)*.707});
-const $=id=>document.getElementById(id);presets.forEach((p,i)=>$('preset').add(new Option(p.name,i)));const params=new URLSearchParams(location.search);$('preset').value=params.get('preset')||'5';for(const id of['altitude','view','season','weather'])if(params.has(id))$(id).value=params.get(id);
+for(let side=0;side<4;side++){const rows=horizon.model.border.filter(p=>side===0?p.z===-8000:side===1?p.x===10000:side===2?p.z===8000:p.x===-10000).sort((a,b)=>geo.ecological(b.x,b.z).tree-geo.ecological(a.x,a.z).tree),p=rows[0];presets.push({name:['北','东','南','西'][side]+'林缘',x:Math.max(-9998,Math.min(9998,p.x)),z:Math.max(-7998,Math.min(7998,p.z)),dx:[0,1,0,-1][side],dz:[-1,0,1,0][side]});}
+const $=id=>document.getElementById(id);presets.forEach((p,i)=>$('preset').add(new Option(p.name,i)));$('preset').value=params.get('preset')||'5';for(const id of['altitude','view','season','weather'])if(params.has(id))$(id).value=params.get(id);
 function render(){
  const p=presets[Number($('preset').value)],height=$('altitude').value,view=$('view').value,weather=$('weather').value;
  const y=height==='high'?8000-ALT_BASE:geo.height(p.x,p.z)+(height==='ground'?2:200);camera.position.set(p.x,y,p.z);
@@ -26,7 +32,7 @@ function render(){
  const down=view==='down'?-5000:height==='high'?-2600:height==='near'?-70:50;
  camera.up.set(0,1,0);camera.lookAt(p.x+dx*(view==='down'?1:4000),y+down,p.z+dz*(view==='down'?1:4000));
  land.sky.position.copy(camera.position);land.season.value=Number($('season').value);land.day.value=weather==='night'?.05:1;land.skyUniforms.uCloud.value=weather==='fog'?1:0;
- scene.fog.color.set(weather==='night'?'#172638':'#adc8cf');scene.fog.density=weather==='fog'?.00032:.00004;hemi.intensity=weather==='night'?.22:1.63;sun.intensity=weather==='night'?0:2.7;horizon.update(camera);
+ scene.fog.color.set(weather==='night'?'#172638':'#adc8cf');scene.fog.density=weather==='fog'?.00032:.00004;hemi.intensity=weather==='night'?.22:1.63;sun.intensity=weather==='night'?0:2.7;horizon.update(camera);if(forest)forest.observer.value.copy(camera.position);
  renderer.render(scene,camera);$('status').textContent=`${p.name} · ${height} · ${view} · ${weather} · 地形三角面 ${renderer.info.render.triangles.toLocaleString()}`;
 }
 for(const id of['preset','altitude','view','season','weather'])$(id).onchange=render;

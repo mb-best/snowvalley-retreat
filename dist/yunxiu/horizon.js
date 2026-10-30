@@ -71,8 +71,8 @@ export class HorizonModel{
     river.points.push({x:end[0]+ux*d-uz*bend,z:end[1]+uz*d+ux*bend,level:level-d*.009,width:river.width*(1+d/10000),distance:d});
    }
    for(let i=1;i<river.points.length;i++){
-    const a=river.points[i-1],b=river.points[i],pad=420;
-    this.riverIndex.add({a,b},[Math.min(a.x,b.x)-pad,Math.min(a.z,b.z)-pad,Math.max(a.x,b.x)+pad,Math.max(a.z,b.z)+pad]);
+    const a=river.points[i-1],b=river.points[i],pad=3800;
+    this.riverIndex.add({a,b,river},[Math.min(a.x,b.x)-pad,Math.min(a.z,b.z)-pad,Math.max(a.x,b.x)+pad,Math.max(a.z,b.z)+pad]);
    }
    this.rivers.push(river);
   }
@@ -99,11 +99,24 @@ export class HorizonModel{
   const broad=noise(warpedX,warpedZ,17),ridge=1-Math.abs(2*noise(warpedX*1.9,warpedZ*1.9,31)-1);
   const distant=regional*.56+180+(380+upland*2100)*(.58*broad+.42*ridge)+noise(x/2200,z/2200,41)*150;
   let y=mix(extension,distant,smooth(1200,14500,d))-d*d/(2*6371000);
-  for(const {a,b} of this.riverIndex.at(x,z)){
-   const nearest=segment([x,z],[a.x,a.z],[b.x,b.z]),along=mix(a.distance,b.distance,nearest.t),level=mix(a.level,b.level,nearest.t),floor=riverFloor(along);
-   const carved=mix(level-2.4,y,smooth(floor,floor+320,nearest.distance));
-   y=mix(y,Math.min(y,carved),smooth(0,180,d)*(1-smooth(10500,14000,along)));
-  }return y;
+  // Evaluate each river once at its closest segment. Repeatedly carving the
+  // same point with every segment in a cell produces artificial narrow slots.
+  const channels=new Map();
+  for(const {a,b,river} of this.riverIndex.at(x,z)){
+   const nearest=segment([x,z],[a.x,a.z],[b.x,b.z]);
+   if(!channels.has(river)||nearest.distance<channels.get(river).distance)channels.set(river,{...nearest,a,b});
+  }
+  let channelWeight=0,channelLevel=0,influence=0;
+  for(const {a,b,t,distance}of channels.values()){
+   const along=mix(a.distance,b.distance,t),level=mix(a.level,b.level,t),relief=y-level+2.4,width=Math.min(3800,1000+along*.12+Math.max(0,relief)*.7),floor=Math.min(900,80+along*.085);
+   // A floodplain grows with distance as the terrain LOD becomes coarser.
+   // The water stays above ground without needing an unresolved razor trench.
+   const strength=(1-smooth(floor,width,distance))*smooth(0,Math.max(120,distance*1.6),d)*(1-smooth(10500,14000,along));
+   const weight=strength*(80/(80+distance))**6;
+   channelWeight+=weight;channelLevel+=(level-2.4)*weight;influence=Math.max(influence,strength);
+  }
+  if(channelWeight>0)y=mix(y,channelLevel/channelWeight,influence);
+  return y;
  }
  normal(x,z){
   const step=25,bx=clamp(x,MIN_X,MAX_X),bz=clamp(z,MIN_Z,MAX_Z);
@@ -124,7 +137,6 @@ export class HorizonModel{
  }
  ridge(angle,layer){const h=this.regional(angle),upland=smooth(1050,2300,h),r=Math.pow(.5+.5*wave(angle,2.2+layer*1.73),1.45);return 1900+h*.38+(650+upland*3000+layer*300)*r;}
 }
-const riverFloor=along=>70+along*.005;
 
 function dataTexture(bytes,width,height){const t=new T.DataTexture(bytes,width,height,T.RGBAFormat);t.wrapS=T.RepeatWrapping;t.minFilter=T.LinearMipmapLinearFilter;t.magFilter=T.LinearFilter;t.generateMipmaps=true;t.needsUpdate=true;return t;}
 
@@ -187,7 +199,8 @@ export class DistantLandscape{
  }
  forestAt(x,z){
   const bx=clamp(x,MIN_X,MAX_X),bz=clamp(z,MIN_Z,MAX_Z),e=this.land.geo.ecological(bx,bz),y=this.model.height(x,z),altitude=y+ALT_BASE;
-  const tree=e.tree*(1-smooth(e.forestLine-120,e.forestLine,altitude));
+  let tree=e.tree*(1-smooth(e.forestLine-120,e.forestLine,altitude));
+  if(tree>.01)for(const {a,b,river}of this.model.riverIndex.at(x,z))if(segment([x,z],[a.x,a.z],[b.x,b.z]).distance<river.width*.7+5){tree=0;break;}
   return{tree,y,altitude,forestLine:e.forestLine,bx,bz};
  }
  makeForest(){

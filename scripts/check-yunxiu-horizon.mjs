@@ -59,14 +59,28 @@ assert(normalError<1e-6,'Shared boundary normals');
 assert(slopeError<.25,'No artificial cliff at the boundary');
 for(const x of[-10000,10000])for(const z of[-8000,8000])for(const d of[.1,10,100,500,2000]){
  const sx=Math.sign(x),sz=Math.sign(z),q=model.height(x+sx*d,z+sz*d);
- const ex=model.height(x+sx*d,z),ez=model.height(x,z+sz*d);
- assert(Number.isFinite(q));assert(Math.abs(q-model.height(x,z))<Math.abs(ex-model.height(x,z))+Math.abs(ez-model.height(x,z))+100,'Corner is a blended continuation');
+ assert(Number.isFinite(q));
+ assert(Math.abs(model.height(x+sx*d,z-.01)-model.height(x+sx*d,z+.01))<.5,'No height jump between side and corner');
+ assert(Math.abs(model.height(x-.01,z+sz*d)-model.height(x+.01,z+sz*d))<.5,'No height jump at the other corner side');
 }
 assert.equal(scenery.model.rivers.length,6,'All six rivers leaving the map continue outside');
+mesh.updateMatrixWorld(true);const ray=new T.Raycaster();let maxRiverBankGrade=0,minRiverClearance=Infinity;
 for(const river of scenery.model.rivers){
  const a=river.points[0];assert(Math.abs(a.level-(geo.waterAt(a.x,a.z)?.height??a.level))<.05);
  for(let i=1;i<river.points.length;i++)assert(river.points[i].level<river.points[i-1].level,'Outside rivers descend');
+ for(let i=10;i<100;i+=10){
+  const p=river.points[i],a=river.points[i-1],b=river.points[i+1],dx=b.x-a.x,dz=b.z-a.z,length=Math.hypot(dx,dz);
+  ray.set(new T.Vector3(p.x,12000,p.z),new T.Vector3(0,-1,0));
+  const floor=ray.intersectObject(mesh)[0];assert(floor,'Exterior river has ground below');
+  const clearance=p.level-floor.point.y;minRiverClearance=Math.min(minRiverClearance,clearance);
+  assert(clearance>1&&clearance<6,'Actual rendered triangles leave a visible, shallow river channel');
+  for(let offset=-2500;offset<=2500;offset+=200){
+   const n=model.normal(p.x-dz/length*offset,p.z+dx/length*offset);
+   maxRiverBankGrade=Math.max(maxRiverBankGrade,Math.hypot(n.x,n.z)/n.y);
+  }
+ }
 }
+assert(maxRiverBankGrade<2,'No near-vertical exterior river slots');
 for(const map of scenery.panoramas){
  const a=map.image.data;assert(a.some((v,i)=>i%4===3&&v===0));assert(a.some((v,i)=>i%4===3&&v===255));
 }
@@ -83,4 +97,4 @@ for(const altitude of[2200,4000,8000]){
  assert.deepEqual(sky.uniforms.uHorizonEye.value,eye);
 }
 const before=land.scene.children.length;scenery.dispose();assert.equal(land.scene.children.length,before-1);
-console.log({seamSamples:1441,seamError,maxGrade,normalError,slopeError,panoramaLayers:3,riverExits:6,riverGravity:'passed',closure:'passed',altitudes:[2200,4000,8000],frozenTerrain:'unchanged',visualOnly:'passed',triangles:g.index.count/3,shaderSource:'passed; see browser review separately'});
+console.log({seamSamples:1441,seamError,maxGrade,normalError,slopeError,maxRiverBankGrade,minRiverClearance,panoramaLayers:3,riverExits:6,riverGravity:'passed',closure:'passed',altitudes:[2200,4000,8000],frozenTerrain:'unchanged',visualOnly:'passed',triangles:g.index.count/3,shaderSource:'passed; see browser review separately'});
