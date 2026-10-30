@@ -5,7 +5,7 @@
 | 工作方向 | 本机目录（相对共同工作区） | GitHub 分支 | 负责内容 |
 | --- | --- | --- | --- |
 | 当前会话：网页应用 | `snowvalley-web/` | `development/web-app-20261030` | Three.js 游戏、美术样板、地图界面、玩法、存档、浏览器性能及 GitHub Pages |
-| 新会话：桌面原生制作 | `snowvalley-github/` | `production/native-art-path-20261029` | UE5 世界、Blender 工程、模型、材质、动画及原生地形导入 |
+| 新会话：桌面原生制作 | `/Volumes/Ti600/wps 云文档/错题集/snowvalley-native/` | `production/native-art-path-20261029` | UE5 世界、Blender 工程、模型、材质、动画及原生地形导入 |
 
 新会话读取 [原生制作交接](NATIVE-SESSION-HANDOFF.md)。本会话网页基线及检查结果见 [网页状态](WEB-STATUS-20261030.md)。
 
@@ -27,3 +27,5 @@
 6. 网页存档当前保存在各浏览器本地；分出两个制作会话不会自动实现跨设备或跨引擎存档同步。
 
 本次只建立工作分流及交接，不改变已上线游戏画面或玩法。聊天窗口需要用户新建，交接文件本身不会创建或启动另一个会话。
+
+续作目录更新：原生旧目录仅作为只读来源保留，当前工作目录见表。迁移细节及本轮样品状态见 `production/native/PROGRESS-03.md`。网页版目录保持原位置。

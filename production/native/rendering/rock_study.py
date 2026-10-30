@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 
 
-def pack_glb(source, target):
+def pack_glb(source, target, derived_basecolor=None):
     doc = json.loads(source.read_text())
     blob = bytearray((source.parent / doc['buffers'][0]['uri']).read_bytes())
     doc['buffers'] = [{'byteLength': len(blob)}]
@@ -24,6 +24,16 @@ def pack_glb(source, target):
         doc['bufferViews'].append({'buffer': 0, 'byteOffset': len(blob), 'byteLength': len(data)})
         image['bufferView'] = view
         blob.extend(data)
+    if derived_basecolor is not None:
+        while len(blob)%4: blob.append(0)
+        data=derived_basecolor.read_bytes()
+        view=len(doc['bufferViews'])
+        doc['bufferViews'].append({'buffer':0,'byteOffset':len(blob),'byteLength':len(data)})
+        blob.extend(data)
+        image=len(doc['images'])
+        doc['images'].append({'name':'Yunxiu_Moss_Carpet_Derived','bufferView':view,'mimeType':'image/png'})
+        texture=len(doc['textures']);doc['textures'].append({'source':image})
+        doc['materials'][0]['pbrMetallicRoughness']['baseColorTexture']['index']=texture
     doc['buffers'][0]['byteLength'] = len(blob)
     text = json.dumps(doc, separators=(',', ':')).encode()
     text += b' ' * ((-len(text)) % 4)
@@ -79,10 +89,10 @@ def main():
     parser.add_argument('--width', type=int, default=1100)
     parser.add_argument('--spp', type=int, default=48)
     parser.add_argument('--moss', action='store_true')
-    parser.add_argument('--moss-style', choices=['patch','cushion'], default='patch')
+    parser.add_argument('--moss-style', choices=['patch','cushion','leaf'], default='patch')
     parser.add_argument('--view', choices=['overview','macro'], default='overview')
     options = parser.parse_args()
-    version=3 if options.moss_style=='cushion' else 2
+    version={'patch':2,'cushion':3,'leaf':4}[options.moss_style]
     options.output.mkdir(parents=True, exist_ok=True)
     cache = options.output / 'renderer-cache'
     cache.mkdir(exist_ok=True)
@@ -137,10 +147,14 @@ def main():
     tex = options.asset / 'textures'
     arm = np.asarray(Image.open(tex/'boulder_01_arm_2k.jpg'), dtype=np.float32)/255
     rough = mi.Bitmap(np.ascontiguousarray(arm[:,:,1]))
+    derived_basecolor=None
+    if options.moss and options.moss_style=='leaf':
+        from moss_carpet import bake_carpet
+        derived_basecolor=bake_carpet(vertices,normals,uv,faces,tex/'boulder_01_diff_2k.jpg',options.output)
     rock_bsdf = mi.load_dict({
         'type':'normalmap',
         'normalmap':{'type':'bitmap','filename':str((tex/'boulder_01_nor_gl_2k.jpg').resolve()),'raw':True},
-        'bsdf':{'type':'principled','base_color':{'type':'bitmap','filename':str((tex/'boulder_01_diff_2k.jpg').resolve())},
+        'bsdf':{'type':'principled','base_color':{'type':'bitmap','filename':str((derived_basecolor or tex/'boulder_01_diff_2k.jpg').resolve())},
                 'roughness':{'type':'bitmap','bitmap':rough,'raw':True},'metallic':0.0}
     })
     props = mi.Properties()
@@ -153,6 +167,10 @@ def main():
     params['faces'] = faces.ravel()
     params.update()
     pack_glb(source,options.output/'boulder-01-source.glb')
+    moss_base=options.output/'boulder-01-source.glb'
+    if derived_basecolor is not None:
+        moss_base=options.output/'boulder-01-carpet.glb'
+        pack_glb(source,moss_base,derived_basecolor)
     moss_mesh=None;moss_count=0;moss_faces_count=0
     if options.moss:
         # Centimetre-scale separate geometry. Patches follow surface orientation
@@ -204,6 +222,9 @@ def main():
         if options.moss_style=='cushion':
             from natural_moss import generate_natural_moss
             mp,mn,mc,mf,moss_count=generate_natural_moss(vertices,normals,faces)
+        if options.moss_style=='leaf':
+            from leaf_moss import generate_leaf_moss
+            mp,mn,mc,mf,moss_count=generate_leaf_moss(vertices,normals,faces)
         moss_faces_count=len(mf)
         # A small tangent-space normal texture gives the attached carpet visible
         # microstructure. It is embedded in GLB as well as used by the renderer.
@@ -225,7 +246,7 @@ def main():
         global_positions=mp+original_offset
         gltf_positions=global_positions[:,[0,2,1]]*np.array([1,1,-1],np.float32)
         gltf_normals=mn[:,[0,2,1]]*np.array([1,1,-1],np.float32)
-        add_moss_glb(options.output/'boulder-01-source.glb',options.output/f'yunxiu-rock-moss-v{version:02}.glb',gltf_positions,gltf_normals,mc,moss_uv,mf,normal_path.read_bytes(),version)
+        add_moss_glb(moss_base,options.output/f'yunxiu-rock-moss-v{version:02}.glb',gltf_positions,gltf_normals,mc,moss_uv,mf,normal_path.read_bytes(),version)
     T = mi.ScalarTransform4f
     base = {
         'type':'scene','integrator':{'type':'path','max_depth':6},
@@ -238,10 +259,14 @@ def main():
                   'sampler':{'type':'independent'},'film':{'type':'hdrfilm','width':options.width,'height':round(options.width*.7),'rfilter':{'type':'tent'}}}
     }
     if moss_mesh is not None:base['moss']=moss_mesh
+    if options.view=='macro' and moss_mesh is None:
+        parser.error('--view macro requires --moss')
     if options.view=='macro':
         direction=np.array([1.25,-1.72,1.05]);direction/=np.linalg.norm(direction)
         visible=(mn@direction>.35)&(mp[:,2]>.5)
         candidates=mp[visible]
+        if not len(candidates):
+            raise ValueError('No visible moss vertices for macro view')
         target=candidates[np.argmin(np.linalg.norm(candidates-np.array([.25,-.2,.76]),axis=1))]
         base['sensor']['to_world']=T.look_at(origin=(target+direction*.72).tolist(),target=target.tolist(),up=[0,0,1])
     started=time.monotonic()
@@ -259,6 +284,7 @@ def main():
         'geometry':'real scanned triangles; GLB embeds original mesh and textures without resampling',
         'mossClumps':moss_count,'mossTriangles':moss_faces_count,
         'mossStyle':options.moss_style,
+        'carpetBasecolor': derived_basecolor.name if derived_basecolor else None,
         'view':options.view,
         'artStatus':'rock and separate moss geometry sample; wetness masks, close-view LOD and engine behaviour pending' if options.moss else 'material baseline, before custom moss geometry, wetness masks and final palette tuning',
         'notGameScreenshot':True,'blenderSceneExecution':'v02 successfully generated and rendered in user Terminal; this revision remains an offline GLB sample until separately imported','unrealExecution':'not attempted: editor absent'

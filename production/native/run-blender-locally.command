@@ -25,6 +25,19 @@ mkdir -p "$BLENDER_USER_RESOURCES"
 print '雪隐山居 · 本机 Blender 地形与岩石样品'
 print '这一步创建独立的可编辑样品，不发布或替换在线游戏。'
 mode="${1:-all}"
+model_override=""
+if (( $# > 0 )); then shift; fi
+if (( $# > 0 )); then
+  if [[ "$#" != 2 || "$1" != --model ]]; then
+    print '用法：[all|--rock-only] [--model GLB文件路径]'
+    exit 1
+  fi
+  model_override="$2"
+  if [[ ! -s "$model_override" ]]; then
+    print "指定的 GLB 不存在或为空：$model_override"
+    exit 1
+  fi
+fi
 if [[ "$mode" != all && "$mode" != --rock-only ]]; then
   print '参数应为空，或使用 --rock-only 只生成岩石工程。'
   exit 1
@@ -41,7 +54,7 @@ if [[ "$mode" == all ]]; then
     --python production/native/blender/import_geography.py -- \
     --bundle production/native/generated/revision-1597 --output "$run_dir/yunxiu-geography.blend"
 fi
-model="$project_dir/production/native/generated/material-study-v02/yunxiu-rock-moss-v02.glb"
+model="${model_override:-$project_dir/production/native/generated/material-study-v02/yunxiu-rock-moss-v02.glb}"
 if [[ -s "$model" ]]; then
   "$blender_bin" --background --factory-startup --disable-autoexec --python-exit-code 1 \
     --python production/native/blender/build_rock_asset.py -- \

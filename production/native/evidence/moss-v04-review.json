@@ -1,0 +1,141 @@
+{
+  "schema": "yunxiu-moss-v04-review/1",
+  "date": "2026-10-30",
+  "candidate": "fine shoots with UV-baked carpet, v04b",
+  "baselineCommit": "980f5d93236860e1bc6fba33c7e36117078bc8ba",
+  "overview": {
+    "schema": "yunxiu-material-study/1",
+    "asset": "Boulder 01",
+    "author": "Rico Cilliers",
+    "license": "CC0-1.0",
+    "source": "https://polyhaven.com/a/boulder_01",
+    "credit": "Powered by Poly Haven",
+    "renderer": "Mitsuba 3.9.1",
+    "variant": "scalar_rgb",
+    "renderSeconds": 8.134,
+    "triangles": 66122,
+    "vertices": 67042,
+    "dimensionsMetres": [
+      1.272135615348816,
+      1.830334186553955,
+      1.0038301944732666
+    ],
+    "textures": {
+      "baseColor": "sRGB bitmap",
+      "normal": "linear OpenGL normal bitmap",
+      "roughness": "linear green channel of original ARM bitmap"
+    },
+    "geometry": "real scanned triangles; GLB embeds original mesh and textures without resampling",
+    "mossClumps": 12000,
+    "mossTriangles": 300000,
+    "mossStyle": "leaf",
+    "carpetBasecolor": "moss-carpet-basecolor.png",
+    "view": "overview",
+    "artStatus": "rock and separate moss geometry sample; wetness masks, close-view LOD and engine behaviour pending",
+    "notGameScreenshot": true,
+    "blenderSceneExecution": "v02 successfully generated and rendered in user Terminal; this revision remains an offline GLB sample until separately imported",
+    "unrealExecution": "not attempted: editor absent"
+  },
+  "macro": {
+    "schema": "yunxiu-material-study/1",
+    "asset": "Boulder 01",
+    "author": "Rico Cilliers",
+    "license": "CC0-1.0",
+    "source": "https://polyhaven.com/a/boulder_01",
+    "credit": "Powered by Poly Haven",
+    "renderer": "Mitsuba 3.9.1",
+    "variant": "scalar_rgb",
+    "renderSeconds": 37.332,
+    "triangles": 66122,
+    "vertices": 67042,
+    "dimensionsMetres": [
+      1.272135615348816,
+      1.830334186553955,
+      1.0038301944732666
+    ],
+    "textures": {
+      "baseColor": "sRGB bitmap",
+      "normal": "linear OpenGL normal bitmap",
+      "roughness": "linear green channel of original ARM bitmap"
+    },
+    "geometry": "real scanned triangles; GLB embeds original mesh and textures without resampling",
+    "mossClumps": 12000,
+    "mossTriangles": 300000,
+    "mossStyle": "leaf",
+    "carpetBasecolor": "moss-carpet-basecolor.png",
+    "view": "macro",
+    "artStatus": "rock and separate moss geometry sample; wetness masks, close-view LOD and engine behaviour pending",
+    "notGameScreenshot": true,
+    "blenderSceneExecution": "v02 successfully generated and rendered in user Terminal; this revision remains an offline GLB sample until separately imported",
+    "unrealExecution": "not attempted: editor absent"
+  },
+  "acceptedForFinalArt": false,
+  "observations": [
+    "Rounded green cushions removed; individual pointed leaves present.",
+    "UV-baked underlayer creates continuous coverage with broken edges.",
+    "Near view still reads as a tinted rock with sparse shoots, rather than a dense moss mat.",
+    "300000 moss triangles are too expensive for unqualified repeated world placement.",
+    "Scan relief and texture limits remain visible in macro view."
+  ],
+  "pending": [
+    "Improve fine carpet structure and local shoot clustering.",
+    "Reduce geometry and add LODs or bake close-view detail.",
+    "Check UV island dilation, mipmaps, roughness and colour response in UE5."
+  ],
+  "blenderV04Executed": false,
+  "unrealExecuted": false,
+  "notGameScreenshot": true,
+  "defaultRunnerInput": "v02 unchanged; v04 requires explicit --model",
+  "files": [
+    {
+      "name": "boulder-01-carpet.glb",
+      "bytes": 21287688,
+      "sha256": "045070f0b9c403b22d674671b2f5237e31f9d31139a9852454bdb19408d7dce8"
+    },
+    {
+      "name": "boulder-01-source.glb",
+      "bytes": 13535348,
+      "sha256": "272032bd07c7a98a47b8bbf7db9581e04b62951887514b25b776bc07635e293d"
+    },
+    {
+      "name": "moss-carpet-basecolor.png",
+      "bytes": 7752195,
+      "sha256": "dd63a01ca6d2e905abdc2983a478e7957aaaa504102c53297a8cd84392c555eb"
+    },
+    {
+      "name": "moss-carpet-mask.png",
+      "bytes": 629069,
+      "sha256": "0f013b792cfc0af12ace231ebe754c3ee0660ba1543418faee59c7ea3504bc8d"
+    },
+    {
+      "name": "moss-micro-normal.png",
+      "bytes": 688524,
+      "sha256": "800c73dc350b738b93cbfa884210d99ac2be742678dbf8bf03aa04de07e95a44"
+    },
+    {
+      "name": "rock-moss-study-v04-macro.png",
+      "bytes": 2053016,
+      "sha256": "c7f6472eb77a8805dbe4e95e0acbd2ebee0d6b25d48b3587bd0ac038fd54d711"
+    },
+    {
+      "name": "rock-moss-study-v04.png",
+      "bytes": 1255048,
+      "sha256": "f45228d65c17200cb6e4e1d6334dce0d4d8211deb191ada24c5c2dd8b2850a8a"
+    },
+    {
+      "name": "study-report-macro.json",
+      "bytes": 1191,
+      "sha256": "ed6b96d10f99c39c5a915bab67b6ae7daba8bf1ba38f93696f80513fff4997cd"
+    },
+    {
+      "name": "study-report.json",
+      "bytes": 1193,
+      "sha256": "5f75e853c8a883799c3c84bf244a2ea09a0eb453a933f516d6ea076afd58f40d"
+    },
+    {
+      "name": "yunxiu-rock-moss-v04.glb",
+      "bytes": 65177904,
+      "sha256": "019382c54bad52e615c1e6d1ac7d2abbc15675b54e311b7b0cf023741774ab20"
+    }
+  ]
+}
