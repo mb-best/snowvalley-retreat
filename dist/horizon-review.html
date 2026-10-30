@@ -1,0 +1,34 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="robots" content="noindex"><title>云岫边界画面检查</title><style>body{margin:0;background:#adc8cf;font:13px sans-serif}canvas{display:block}#tools{position:fixed;top:12px;left:12px;background:#fffE;padding:12px;border-radius:9px;display:flex;gap:10px;z-index:1}select{padding:6px}#status{position:fixed;bottom:12px;left:12px;background:#fffD;padding:10px;border-radius:6px}</style>
+<div id="tools"><select id="preset" aria-label="边界检查位置"></select><select id="altitude" aria-label="观察高度"><option value="ground">地面 2 m</option><option value="near">边缘上空 200 m</option><option value="high" selected>海拔 8000 m 俯视</option></select><select id="view" aria-label="观察方向"><option value="out" selected>向外</option><option value="along">沿边界</option><option value="back">向内</option><option value="down">垂直俯视</option></select><select id="season" aria-label="季节"><option value="1">夏</option><option value="3">冬</option></select><select id="weather" aria-label="天气"><option value="clear">晴天</option><option value="fog">浓雾</option><option value="night">夜间</option></select></div><output id="status">正在创建地形</output>
+<script type="module">
+import * as T from './vendor/three.module.js';
+import {Geography,ALT_BASE} from './yunxiu/core.js';
+import {Hydrology} from './yunxiu/hydrology.js';
+import {Landscape} from './yunxiu/scene.js';
+import {DistantLandscape} from './yunxiu/horizon.js';
+const data=await (await fetch('./yunxiu/world-data.json')).json(),bytes=new Uint8Array(await (await fetch('./yunxiu/terrain-1597.f32')).arrayBuffer());
+const geo=new Geography(data,new Float32Array(bytes.buffer));new Hydrology(geo);
+const scene=new T.Scene();scene.fog=new T.FogExp2('#adc8cf',.00004);
+const renderer=new T.WebGLRenderer({antialias:true,logarithmicDepthBuffer:true,preserveDrawingBuffer:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(1);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.02;document.body.append(renderer.domElement);
+const camera=new T.PerspectiveCamera(55,innerWidth/innerHeight,.2,220000),hemi=new T.HemisphereLight('#d1e4ed','#8d9169',1.63),sun=new T.DirectionalLight('#fff2d7',2.7);sun.position.set(-450,700,300);scene.add(hemi,sun);
+const land=new Landscape(scene,geo,{},'low');land.makeTerrain();land.makeWater();land.makeSky();const horizon=new DistantLandscape(land);horizon.configureSky(land.sky.material);
+const presets=[];
+for(let side=0;side<4;side++){
+ const border=horizon.model.border.filter(p=>side===0?p.z===-8000:side===1?p.x===10000:side===2?p.z===8000:p.x===-10000).sort((a,b)=>a.h-b.h);
+ for(const [kind,p]of [['谷口',border[15]],['山脊',border.at(-16)]])presets.push({name:['北','东','南','西'][side]+kind,x:Math.max(-9998,Math.min(9998,p.x)),z:Math.max(-7998,Math.min(7998,p.z)),dx:[0,1,0,-1][side],dz:[-1,0,1,0][side]});
+}
+for(const[x,z,name]of[[-9998,-7998,'西北角'],[9998,-7998,'东北角'],[9998,7998,'东南角'],[-9998,7998,'西南角']])presets.push({name,x,z,dx:Math.sign(x)*.707,dz:Math.sign(z)*.707});
+const $=id=>document.getElementById(id);presets.forEach((p,i)=>$('preset').add(new Option(p.name,i)));const params=new URLSearchParams(location.search);$('preset').value=params.get('preset')||'5';for(const id of['altitude','view','season','weather'])if(params.has(id))$(id).value=params.get(id);
+function render(){
+ const p=presets[Number($('preset').value)],height=$('altitude').value,view=$('view').value,weather=$('weather').value;
+ const y=height==='high'?8000-ALT_BASE:geo.height(p.x,p.z)+(height==='ground'?2:200);camera.position.set(p.x,y,p.z);
+ let dx=p.dx,dz=p.dz;if(view==='along')[dx,dz]=[-dz,dx];if(view==='back'){dx=-dx;dz=-dz;}
+ const down=view==='down'?-5000:height==='high'?-2600:height==='near'?-70:50;
+ camera.up.set(0,1,0);camera.lookAt(p.x+dx*(view==='down'?1:4000),y+down,p.z+dz*(view==='down'?1:4000));
+ land.sky.position.copy(camera.position);land.season.value=Number($('season').value);land.day.value=weather==='night'?.05:1;land.skyUniforms.uCloud.value=weather==='fog'?1:0;
+ scene.fog.color.set(weather==='night'?'#172638':'#adc8cf');scene.fog.density=weather==='fog'?.00032:.00004;hemi.intensity=weather==='night'?.22:1.63;sun.intensity=weather==='night'?0:2.7;horizon.update(camera);
+ renderer.render(scene,camera);$('status').textContent=`${p.name} · ${height} · ${view} · ${weather} · 地形三角面 ${renderer.info.render.triangles.toLocaleString()}`;
+}
+for(const id of['preset','altitude','view','season','weather'])$(id).onchange=render;
+addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();render();});render();setTimeout(render,1500);
+</script></html>
