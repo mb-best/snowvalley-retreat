@@ -37,3 +37,9 @@ runner检查引擎、完整Xcode及Metal编译器，核对源文件，调用官�
 成功执行后才会生成`Content/Maps/YunxiuStudy.umap`及`Saved/yunxiu-editor-bootstrap.json`。导入报告也不能代替PIE行走、碰撞、光照、材质和性能验收。
 
 已通过Python编译检查、zsh语法检查、JSON解析、源数据哈希、GLB数学结构检查。启动器未安装，尚无实际组件占用或引擎帧率可报告。
+
+## 植被样品02
+
+`stage_sources.py`在检测到`generated/vegetation-v02/manifest.json`时额外校验并复制6个GLB。导入脚本先复查全部暂存文件的SHA256，再导入独立的`/Game/Imported/VegetationReview02/`目录，生成`/Game/Maps/YunxiuStudy_Vegetation02`，不改旧地图。树的三个精度版本并排放置供轮廓检查；蕨类两档、新草花和旧木石屋也进入待审场景。**这些是独立模型，不是已经绑定的UE自动LOD。**
+
+本轮仅完成脚本、结构与源文件准备，尚无编辑器执行结果。首次成功后请打开新地图再检查PIE；项目默认地图配置仍保留旧样板入口。若导入中途失败，已创建的导入目录会被保护而拒绝覆盖，需要在编辑器中核查残留并选用新目录后再试，不能直接宣称导入成功。

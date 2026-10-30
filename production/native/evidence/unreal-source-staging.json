@@ -43,6 +43,198 @@
       "file": "axis-calibration-v01.glb",
       "bytes": 7592,
       "sha256": "eaa338e1dc4226177645b0ad235f03f0554bf1411823f2b110c813e1c5c3d065"
+    },
+    {
+      "file": "alpine-spruce-v02-lod0.glb",
+      "bytes": 5258012,
+      "sha256": "d51bb73a02bd9eb511c206bb5673c80813613a25765984942da42e8b4ca87ad0"
+    },
+    {
+      "file": "alpine-spruce-v02-lod1.glb",
+      "bytes": 1892308,
+      "sha256": "e0db5ac51d08f27e416f06ec1025f979e54f1a64026eb4ea38609bf1ec9fb073"
+    },
+    {
+      "file": "alpine-spruce-v02-lod2.glb",
+      "bytes": 524088,
+      "sha256": "14d27cf7843efe2ee51eb7a63f377f4383d8b755157a218ae38044f5089e1d4b"
+    },
+    {
+      "file": "alpine-fern-v01-lod0.glb",
+      "bytes": 211192,
+      "sha256": "77a19b5ef86c7aaf4d81ee7b5e4580e1fab5aab4cbfbd4d1fa0adb2f267cf027"
+    },
+    {
+      "file": "alpine-fern-v01-lod1.glb",
+      "bytes": 133576,
+      "sha256": "ae9c4481af991241aacaf11801730f363b23036c54100c7d210a8fb8cb285412"
+    },
+    {
+      "file": "alpine-meadow-v02-lod0.glb",
+      "bytes": 160116,
+      "sha256": "166da4bb56badd7b1e581a1a8693e550356545f6d29756eb78b30fa0c4188318"
+    }
+  ],
+  "vegetationAssets": [
+    {
+      "id": "alpine-spruce-v02-lod0",
+      "file": "alpine-spruce-v02-lod0.glb",
+      "triangles": 62536,
+      "parts": 3,
+      "dimensionsMetresXYZ": [
+        4.842423158553908,
+        4.547366945074656,
+        10.808244501801976
+      ],
+      "boundsMinZUp": [
+        -2.2620786116797515,
+        -2.444583539155123,
+        -0.007689010109490517
+      ],
+      "boundsMaxZUp": [
+        2.580344546874157,
+        2.102783405919533,
+        10.800555491692485
+      ],
+      "bytes": 5258012,
+      "sha256": "d51bb73a02bd9eb511c206bb5673c80813613a25765984942da42e8b4ca87ad0",
+      "license": "project-authored procedural geometry; no third-party mesh input",
+      "artAccepted": false,
+      "lod": 0,
+      "triangleFractionOfLOD0": 1.0
+    },
+    {
+      "id": "alpine-spruce-v02-lod1",
+      "file": "alpine-spruce-v02-lod1.glb",
+      "triangles": 22468,
+      "parts": 3,
+      "dimensionsMetresXYZ": [
+        4.708025273114568,
+        4.4182686629531895,
+        10.807760850269972
+      ],
+      "boundsMinZUp": [
+        -2.196222757346671,
+        -2.375611150802978,
+        -0.007218654383532759
+      ],
+      "boundsMaxZUp": [
+        2.5118025157678976,
+        2.0426575121502117,
+        10.80054219588644
+      ],
+      "bytes": 1892308,
+      "sha256": "e0db5ac51d08f27e416f06ec1025f979e54f1a64026eb4ea38609bf1ec9fb073",
+      "license": "project-authored procedural geometry; no third-party mesh input",
+      "artAccepted": false,
+      "lod": 1,
+      "triangleFractionOfLOD0": 0.359281054112831
+    },
+    {
+      "id": "alpine-spruce-v02-lod2",
+      "file": "alpine-spruce-v02-lod2.glb",
+      "triangles": 6180,
+      "parts": 3,
+      "dimensionsMetresXYZ": [
+        4.351325581112945,
+        4.067675275950154,
+        10.808118257069482
+      ],
+      "boundsMinZUp": [
+        -2.014403532813228,
+        -2.1891614390121257,
+        -0.007584250895898098
+      ],
+      "boundsMaxZUp": [
+        2.3369220482997175,
+        1.8785138369380279,
+        10.800534006173585
+      ],
+      "bytes": 524088,
+      "sha256": "14d27cf7843efe2ee51eb7a63f377f4383d8b755157a218ae38044f5089e1d4b",
+      "license": "project-authored procedural geometry; no third-party mesh input",
+      "artAccepted": false,
+      "lod": 2,
+      "triangleFractionOfLOD0": 0.0988230779071255
+    },
+    {
+      "id": "alpine-fern-v01-lod0",
+      "file": "alpine-fern-v01-lod0.glb",
+      "triangles": 2464,
+      "parts": 2,
+      "dimensionsMetresXYZ": [
+        1.1474201642779494,
+        1.2415183108508292,
+        0.40189369180382456
+      ],
+      "boundsMinZUp": [
+        -0.6188583798219569,
+        -0.6009724728421336,
+        0.02733681162268865
+      ],
+      "boundsMaxZUp": [
+        0.5285617844559923,
+        0.6405458380086955,
+        0.4292305034265132
+      ],
+      "bytes": 211192,
+      "sha256": "77a19b5ef86c7aaf4d81ee7b5e4580e1fab5aab4cbfbd4d1fa0adb2f267cf027",
+      "license": "project-authored procedural geometry; no third-party mesh input",
+      "artAccepted": false,
+      "lod": 0,
+      "triangleFractionOfLOD0": 1.0
+    },
+    {
+      "id": "alpine-fern-v01-lod1",
+      "file": "alpine-fern-v01-lod1.glb",
+      "triangles": 1540,
+      "parts": 2,
+      "dimensionsMetresXYZ": [
+        1.1402320134111763,
+        1.2330755187151459,
+        0.40001827895851877
+      ],
+      "boundsMinZUp": [
+        -0.611670228955184,
+        -0.5942756883518839,
+        0.02733681162268865
+      ],
+      "boundsMaxZUp": [
+        0.5285617844559923,
+        0.6387998303632618,
+        0.4273550905812074
+      ],
+      "bytes": 133576,
+      "sha256": "ae9c4481af991241aacaf11801730f363b23036c54100c7d210a8fb8cb285412",
+      "license": "project-authored procedural geometry; no third-party mesh input",
+      "artAccepted": false,
+      "lod": 1,
+      "triangleFractionOfLOD0": 0.625
+    },
+    {
+      "id": "alpine-meadow-v02-lod0",
+      "file": "alpine-meadow-v02-lod0.glb",
+      "triangles": 1811,
+      "parts": 7,
+      "dimensionsMetresXYZ": [
+        0.9872480490245072,
+        0.9626217031580171,
+        0.49892178007112603
+      ],
+      "boundsMinZUp": [
+        -0.49856675988254884,
+        -0.4909452489791313,
+        -0.0005581975014766133
+      ],
+      "boundsMaxZUp": [
+        0.48868128914195846,
+        0.4716764541788858,
+        0.4983635825696494
+      ],
+      "bytes": 160116,
+      "sha256": "166da4bb56badd7b1e581a1a8693e550356545f6d29756eb78b30fa0c4188318",
+      "license": "project-authored procedural geometry; no third-party mesh input",
+      "artAccepted": false
     }
   ],
   "engineExecuted": false,

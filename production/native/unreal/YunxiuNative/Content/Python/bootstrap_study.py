@@ -2,6 +2,7 @@
 Import portable samples, verify importer axes/scale, then create a fresh study map.
 No runtime or visual acceptance is claimed until this executes successfully.
 """
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -53,15 +54,23 @@ def main():
  source=Path(unreal.Paths.project_content_dir())/'NativeSource'
  receipt=json.loads((source/'staging-manifest.json').read_text())
  if receipt['sourceRevision']!=1597:raise ValueError('Wrong frozen map revision')
- level='/Game/Maps/YunxiuStudy'
+ # Check every staged byte before modifying editor assets.
+ for record in receipt['files']:
+  path=source/record['file']
+  if path.stat().st_size!=record['bytes'] or hashlib.sha256(path.read_bytes()).hexdigest()!=record['sha256']:
+   raise ValueError('Staged file changed: '+str(path))
+ vegetation=receipt.get('vegetationAssets',[])
+ level='/Game/Maps/YunxiuStudy_Vegetation02' if vegetation else '/Game/Maps/YunxiuStudy'
  if unreal.EditorAssetLibrary.does_asset_exist(level):
   unreal.log_warning('Existing study map preserved; bootstrap will not overwrite it.')
   return
- axes=import_meshes(source/'axis-calibration-v01.glb','/Game/Imported/Calibration_v01')
+ import_root='/Game/Imported/VegetationReview02/' if vegetation else '/Game/Imported/'
+ axes=import_meshes(source/'axis-calibration-v01.glb',import_root+'Calibration_v01')
  rotation=calibrated_rotation(axes)
  samples={}
- for name in ['alpine-spruce-structure-v01','alpine-meadow-clump-v01','swiss-timber-stone-house-v01']:
-  samples[name]=import_meshes(source/(name+'.glb'),'/Game/Imported/'+name.replace('-','_'))
+ names=['swiss-timber-stone-house-v01']+[r['id'] for r in vegetation] if vegetation else ['alpine-spruce-structure-v01','alpine-meadow-clump-v01','swiss-timber-stone-house-v01']
+ for name in names:
+  samples[name]=import_meshes(source/(name+'.glb'),import_root+name.replace('-','_'))
  world=unreal.EditorLoadingAndSavingUtils.new_blank_map(False)
  subsystem=unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
  terrain_class=unreal.load_class(None,'/Script/YunxiuNative.YunxiuStudyTerrain')
@@ -72,6 +81,11 @@ def main():
  sun=subsystem.spawn_actor_from_class(unreal.DirectionalLight,unreal.Vector(0,0,130000),unreal.Rotator(-38,-25,0))
  sun.set_actor_label('Study_sun_lighting_pending_review')
  placements=[('swiss-timber-stone-house-v01',1017.2768,-3107.3004),('alpine-spruce-structure-v01',1002,-3095),('alpine-meadow-clump-v01',1027,-3120)]
+ if vegetation:
+  placements=[('swiss-timber-stone-house-v01',1017.2768,-3107.3004),('alpine-meadow-v02-lod0',1027,-3120),('alpine-fern-v01-lod0',1026,-3117)]
+  # Side-by-side diagnostics only. Separate GLBs are not engine-bound LODs.
+  placements += [('alpine-spruce-v02-lod'+str(i),1002-i*7,-3095) for i in range(3)]
+  placements += [('alpine-fern-v01-lod1',1028,-3117)]
  for name,east,south in placements:
   x,y=east-1150,south+3200;h=terrain.height_at_local_metres(x,y)
   if not math.isfinite(h):raise ValueError('Sample outside reference patch')
@@ -81,7 +95,7 @@ def main():
    actor.set_actor_label('REVIEW_ONLY_'+mesh.get_name())
  unreal.EditorAssetLibrary.make_directory('/Game/Maps')
  if not unreal.EditorLoadingAndSavingUtils.save_map(world,level):raise RuntimeError('Study map could not be saved')
- report={'engine':unreal.SystemLibrary.get_engine_version(),'map':level,'sourceRevision':1597,'axesAndScaleChecked':True,'editorImportExecuted':True,'cppCompiled':True,'playTested':False,'artAccepted':False,'note':'Press Play to inspect collision/movement, then review lighting, materials and performance; terrain and source actor placements must be checked visually.'}
+ report={'engine':unreal.SystemLibrary.get_engine_version(),'map':level,'sourceRevision':1597,'axesAndScaleChecked':True,'editorImportExecuted':True,'cppCompiled':True,'vegetationReview':bool(vegetation),'lodsBoundInEngine':False,'playTested':False,'artAccepted':False,'note':'Press Play to inspect collision/movement, then review lighting, materials and performance; terrain and source actor placements must be checked visually.'}
  out=Path(unreal.Paths.project_saved_dir())/'yunxiu-editor-bootstrap.json';out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(report,indent=2)+'\n')
  unreal.log('Yunxiu study imported and saved; PIE and art acceptance remain pending.')
 if __name__=='__main__':main()

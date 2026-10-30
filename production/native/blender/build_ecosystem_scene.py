@@ -17,7 +17,10 @@ def main():
  args.output.mkdir(parents=True)
  bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
  scene=bpy.context.scene;scene.unit_settings.system='METRIC';scene.unit_settings.scale_length=1
- for name,offset in [('alpine-spruce-structure-v01',(-8,0,0)),('swiss-timber-stone-house-v01',(4,0,0)),('alpine-meadow-clump-v01',(-3,-6,0))]:
+ manifest=json.loads((args.assets/'manifest.json').read_text())
+ names=[r['id'] for r in manifest['assets'] if r.get('lod',0)==0]
+ for i,name in enumerate(names):
+  offset=(i*8-8,0,0)
   before=set(scene.objects);bpy.ops.import_scene.gltf(filepath=str((args.assets/(name+'.glb')).resolve()))
   imported=set(scene.objects)-before
   collection=bpy.data.collections.new(name);scene.collection.children.link(collection)
@@ -43,7 +46,7 @@ def main():
  scene.render.engine='CYCLES';scene.cycles.device='CPU';scene.cycles.samples=64;scene.cycles.use_denoising=True
  scene.render.resolution_x=1600;scene.render.resolution_y=1000;scene.render.resolution_percentage=100
  scene['status']='Tree, grass/flower and chalet review studies. Not a final accepted scene or UE screenshot.'
- note=bpy.data.texts.new('READ_ME');note.write('Metres, editable meshes grouped by sample.\nHouse board 06 was not selected: this is a separate review study.\nTree crown, grass/petal shape and all realistic material work remain pending.\n')
+ note=bpy.data.texts.new('READ_ME');note.write('Metres, editable meshes grouped by sample.\nHouse board 06 was not selected: this is a separate review study.\nTree crown, grass/petal shape and all realistic material work remain pending. LOD files remain separate and are not bound to engine distance switches.\n')
  bpy.ops.file.pack_all();bpy.ops.wm.save_as_mainfile(filepath=str((args.output/'yunxiu-ecosystem-study.blend').resolve()))
  if args.render:
   scene.render.filepath=str((args.output/'blender-ecosystem-study.png').resolve());bpy.ops.render.render(write_still=True)

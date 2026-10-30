@@ -1,0 +1,62 @@
+{
+  "schema": "yunxiu-vegetation-validation/2",
+  "models": [
+    {
+      "file": "alpine-spruce-v02-lod0.glb",
+      "bytes": 5258012,
+      "sha256": "d51bb73a02bd9eb511c206bb5673c80813613a25765984942da42e8b4ca87ad0",
+      "meshes": 3,
+      "triangles": 62536,
+      "embeddedImages": 0
+    },
+    {
+      "file": "alpine-spruce-v02-lod1.glb",
+      "bytes": 1892308,
+      "sha256": "e0db5ac51d08f27e416f06ec1025f979e54f1a64026eb4ea38609bf1ec9fb073",
+      "meshes": 3,
+      "triangles": 22468,
+      "embeddedImages": 0
+    },
+    {
+      "file": "alpine-spruce-v02-lod2.glb",
+      "bytes": 524088,
+      "sha256": "14d27cf7843efe2ee51eb7a63f377f4383d8b755157a218ae38044f5089e1d4b",
+      "meshes": 3,
+      "triangles": 6180,
+      "embeddedImages": 0
+    },
+    {
+      "file": "alpine-fern-v01-lod0.glb",
+      "bytes": 211192,
+      "sha256": "77a19b5ef86c7aaf4d81ee7b5e4580e1fab5aab4cbfbd4d1fa0adb2f267cf027",
+      "meshes": 2,
+      "triangles": 2464,
+      "embeddedImages": 0
+    },
+    {
+      "file": "alpine-fern-v01-lod1.glb",
+      "bytes": 133576,
+      "sha256": "ae9c4481af991241aacaf11801730f363b23036c54100c7d210a8fb8cb285412",
+      "meshes": 2,
+      "triangles": 1540,
+      "embeddedImages": 0
+    },
+    {
+      "file": "alpine-meadow-v02-lod0.glb",
+      "bytes": 160116,
+      "sha256": "166da4bb56badd7b1e581a1a8693e550356545f6d29756eb78b30fa0c4188318",
+      "meshes": 7,
+      "triangles": 1811,
+      "embeddedImages": 0
+    }
+  ],
+  "checks": [
+    "GLB structure, finite coordinates, normal lengths, index bounds, source SHA256",
+    "LOD triangle counts strictly decrease; height variation under 2%",
+    "Python syntax compile and source staging"
+  ],
+  "visualReview": "offline previews reviewed; leaf repetition, flat PBR colour, rigid flowers and sparse apex still need work; not final art",
+  "unrealExecuted": false,
+  "blenderExecuted": false,
+  "lodsBoundInEngine": false
+}
