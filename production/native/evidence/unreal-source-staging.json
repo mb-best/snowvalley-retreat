@@ -1,0 +1,51 @@
+{
+  "schema": "yunxiu-unreal-source-staging/1",
+  "sourceRevision": 1597,
+  "sourceMapSha256": "cf6959526d1ce86c1acaed4ac1743f38ba697a26260ce82396389c90b4c5f757",
+  "terrainStatus": "201x201 5m hydrology-aware context reference, not added real geological detail or a full-world Landscape acceptance",
+  "localOriginEastSouthMetres": [
+    1150,
+    -3200
+  ],
+  "baseAltitudeMetres": 1700,
+  "files": [
+    {
+      "file": "study-context.f32",
+      "bytes": 161604,
+      "sha256": "92614179ac7b2c88447b129a548c32db6f7c241a3891aef0303e3074096b890a"
+    },
+    {
+      "file": "study.json",
+      "bytes": 1417,
+      "sha256": "fc08f18d2ac91b996aef9a6fc41312d86698cc46bc8e3f210620c5a46305c8c0"
+    },
+    {
+      "file": "manifest.json",
+      "bytes": 5818,
+      "sha256": "15424e04affef490c10c2700efad13d3c30328ea6fee9fcc9e60a12e9157a051"
+    },
+    {
+      "file": "alpine-spruce-structure-v01.glb",
+      "bytes": 5250632,
+      "sha256": "3fb1ef282bffbf8306996362df83ac1c19ae18df1f0896148027ca12239bdf4d"
+    },
+    {
+      "file": "alpine-meadow-clump-v01.glb",
+      "bytes": 137152,
+      "sha256": "53239801f026a6eee79b07e6293119438e6581f7a6523e1671f556a2a48c18e4"
+    },
+    {
+      "file": "swiss-timber-stone-house-v01.glb",
+      "bytes": 552372,
+      "sha256": "767a920190bfc0daedb58e5819d6d5bf21118c7f86507ba0e6f25c87cce2d456"
+    },
+    {
+      "file": "axis-calibration-v01.glb",
+      "bytes": 7592,
+      "sha256": "eaa338e1dc4226177645b0ad235f03f0554bf1411823f2b110c813e1c5c3d065"
+    }
+  ],
+  "engineExecuted": false,
+  "cppCompiled": false,
+  "readyForRuntimeAcceptance": false
+}

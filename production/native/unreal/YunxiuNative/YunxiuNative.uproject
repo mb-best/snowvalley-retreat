@@ -1,0 +1,13 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "5.8",
+  "Category": "Yunxiu native study",
+  "Description": "Native terrain and asset integration study, not an accepted art or gameplay build",
+  "Modules": [{"Name": "YunxiuNative", "Type": "Runtime", "LoadingPhase": "Default"}],
+  "Plugins": [
+    {"Name": "ProceduralMeshComponent", "Enabled": true},
+    {"Name": "PythonScriptPlugin", "Enabled": true, "TargetAllowList": ["Editor"]},
+    {"Name": "EditorScriptingUtilities", "Enabled": true, "TargetAllowList": ["Editor"]},
+    {"Name": "Interchange", "Enabled": true, "TargetAllowList": ["Editor"]}
+  ]
+}

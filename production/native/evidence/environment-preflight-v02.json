@@ -1,0 +1,23 @@
+{
+  "schema": "yunxiu-native-preflight/2",
+  "date": "2026-10-30",
+  "hardware": {
+    "model": "Mac mini",
+    "chip": "Apple M4",
+    "cpuCores": 10,
+    "gpuCores": 10,
+    "memoryGiB": 16,
+    "os": "macOS 26.6.2"
+  },
+  "freeGiBApprox": {
+    "system": 29,
+    "Ti600": 662
+  },
+  "engineTarget": "5.8 pending installation verification",
+  "xcodeTarget": "26.1.1 per UE5.8 official requirements",
+  "epicDownload": "Chrome ERR_BLOCKED_BY_CLIENT on official DMG redirect",
+  "xcodeDownload": "Apple login redirect stalled at loading view",
+  "installed": false,
+  "compiled": false,
+  "engineExecuted": false
+}

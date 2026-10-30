@@ -1,0 +1,12 @@
+{
+  "schema": "yunxiu-native-delivery/1",
+  "date": "2026-10-30",
+  "filename": "yunxiu-models-and-ue5-study-v01.zip",
+  "bytes": 9642031,
+  "sha256": "1b87ca88c84e75029204c17a01d41ef569a6d5624fe07b2f3af6a179916e05af",
+  "libraryFileId": "libfile_4e701ffd2f388191a53b18c5a972875b",
+  "contents": "3 editable GLB studies, axis fixture, CPU previews, Blender scene builder, UE5 project source, staged context terrain and audit records",
+  "newBlend": false,
+  "unrealCompiled": false,
+  "playableBuild": false
+}

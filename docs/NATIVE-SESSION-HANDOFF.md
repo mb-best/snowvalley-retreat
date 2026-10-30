@@ -2,6 +2,10 @@
 
 更新：2026-10-30。用户已明确要求将本方向放在新会话推进，原会话继续网页应用。先阅读本文及同目录 [开发分工](DEVELOPMENT-LANES.md)，不要重新进行已经完成的授权或安装步骤。
 
+## 最新进度04（2026-10-30）
+
+新增针叶树、草花、瑞士木石屋三个真实GLB及CPU预览，均待细化。UE5.8工程源码、地形/资产准备、比例轴向校准和导入入口已建立，尚未编译/运行。官方Epic包被Chrome拦截；兼容Xcode入口转到Apple登录且停在加载状态。硬件现已确认M4/16GB，系统盘28–29GiB、Ti600约662GiB可用。详见[进度04](../production/native/PROGRESS-04.md)和[UE5说明](../production/native/unreal/README.md)。下文硬件未核实等描述为历史记录。
+
 ## 本轮续作检查点（2026-10-30）
 
 详见 [原生进度 03](../production/native/PROGRESS-03.md)。本会话已迁移至独立目录 `/Volumes/Ti600/wps 云文档/错题集/snowvalley-native`，原目录和网页目录保留不动。远端原生分支不变。

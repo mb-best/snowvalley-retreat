@@ -1,0 +1,40 @@
+{
+  "schema": "yunxiu-ecosystem-validation/1",
+  "checks": "GLB headers, aligned buffer bounds, finite attributes, unit normals, bounding boxes and triangle indices",
+  "models": [
+    {
+      "file": "alpine-meadow-clump-v01.glb",
+      "bytes": 137152,
+      "sha256": "53239801f026a6eee79b07e6293119438e6581f7a6523e1671f556a2a48c18e4",
+      "meshes": 6,
+      "triangles": 1547,
+      "embeddedImages": 0
+    },
+    {
+      "file": "alpine-spruce-structure-v01.glb",
+      "bytes": 5250632,
+      "sha256": "3fb1ef282bffbf8306996362df83ac1c19ae18df1f0896148027ca12239bdf4d",
+      "meshes": 3,
+      "triangles": 62448,
+      "embeddedImages": 0
+    },
+    {
+      "file": "axis-calibration-v01.glb",
+      "bytes": 7592,
+      "sha256": "eaa338e1dc4226177645b0ad235f03f0554bf1411823f2b110c813e1c5c3d065",
+      "meshes": 3,
+      "triangles": 36,
+      "embeddedImages": 0
+    },
+    {
+      "file": "swiss-timber-stone-house-v01.glb",
+      "bytes": 552372,
+      "sha256": "767a920190bfc0daedb58e5819d6d5bf21118c7f86507ba0e6f25c87cce2d456",
+      "meshes": 7,
+      "triangles": 6488,
+      "embeddedImages": 0
+    }
+  ],
+  "engineExecuted": false,
+  "khronosValidation": false
+}
